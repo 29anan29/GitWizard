@@ -55,15 +55,18 @@
 	}
 
 	.accent {
-		background: var(--color-accent);
+		background: linear-gradient(180deg, #ff5d0b, #f04b00);
 		color: #ffffff;
 		padding: 11px 20px;
 		border-radius: var(--radius-comfortable);
 		font-size: 14px;
 		line-height: 1;
+		box-shadow: 0 1px 2px rgba(240, 75, 0, 0.35);
 	}
 	.accent:hover:not(:disabled) {
-		filter: brightness(1.06);
+		filter: brightness(1.05);
+		box-shadow: 0 8px 22px rgba(245, 78, 0, 0.3);
+		transform: translateY(-1px);
 	}
 
 	.pill {

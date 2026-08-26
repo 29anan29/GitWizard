@@ -51,13 +51,63 @@ body {
 }
 
 body {
-	background: var(--color-bg);
+	background:
+		radial-gradient(1100px 480px at 18% -8%, rgba(245, 78, 0, 0.05), transparent 60%),
+		radial-gradient(900px 420px at 92% -4%, rgba(192, 133, 50, 0.07), transparent 55%),
+		var(--color-bg);
 	color: var(--color-text);
 	font-family: var(--font-ui);
 	font-size: 16px;
 	line-height: 1.5;
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
+}
+
+@keyframes fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes pop-in {
+	0% {
+		transform: scale(0.55);
+		opacity: 0;
+	}
+	70% {
+		transform: scale(1.12);
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes ring-pulse {
+	0% {
+		box-shadow: 0 0 0 0 rgba(31, 138, 101, 0.32);
+	}
+	70% {
+		box-shadow: 0 0 0 20px rgba(31, 138, 101, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(31, 138, 101, 0);
+	}
+}
+
+@keyframes float-y {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-5px);
+	}
 }
 
 button {
