@@ -16,21 +16,26 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-            target: x86_64-unknown-linux-gnu
+            targets: x86_64-unknown-linux-gnu
+            build_target: x86_64-unknown-linux-gnu
             bundles: deb,rpm,appimage
           - os: ubuntu-24.04-arm
-            target: aarch64-unknown-linux-gnu
+            targets: aarch64-unknown-linux-gnu
+            build_target: aarch64-unknown-linux-gnu
             bundles: deb,rpm
             experimental: false
           - os: windows-latest
-            target: x86_64-pc-windows-msvc
+            targets: x86_64-pc-windows-msvc
+            build_target: x86_64-pc-windows-msvc
             bundles: msi,nsis
           - os: windows-latest
-            target: aarch64-pc-windows-msvc
+            targets: aarch64-pc-windows-msvc
+            build_target: aarch64-pc-windows-msvc
             bundles: nsis
             experimental: true
           - os: macos-latest
-            target: universal-apple-darwin
+            targets: aarch64-apple-darwin,x86_64-apple-darwin
+            build_target: universal-apple-darwin
             bundles: dmg
 
     runs-on: ${{ matrix.os }}
@@ -54,12 +59,12 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target }}
+          targets: ${{ matrix.targets }}
 
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
-          key: ${{ matrix.target }}
+          key: ${{ matrix.build_target }}
 
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
@@ -71,15 +76,15 @@ jobs:
           tagName: v__VERSION__
           releaseName: 'GitWizard v__VERSION__'
           releaseBody: 'Cross-platform installers for GitWizard.'
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
-          args: --target ${{ matrix.target }} --bundles ${{ matrix.bundles }}
+          args: --target ${{ matrix.build_target }} --bundles ${{ matrix.bundles }}
 
       - name: Build macOS pkg
         if: runner.os == 'macOS'
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          APP="src-tauri/target/${{ matrix.target }}/release/bundle/macos/GitWizard.app"
+          APP="src-tauri/target/${{ matrix.build_target }}/release/bundle/macos/GitWizard.app"
           pkgbuild --component "$APP" --identifier dev.gitwizard.app --version "$VERSION" --install-location /Applications "GitWizard-${VERSION}.pkg"
 
       - name: Upload macOS pkg to release
@@ -93,7 +98,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: bundles-${{ matrix.os }}-${{ matrix.target }}
+          name: bundles-${{ matrix.os }}-${{ matrix.build_target }}
           if-no-files-found: ignore
           path: |
-            src-tauri/target/${{ matrix.target }}/release/bundle/**/*
+            src-tauri/target/${{ matrix.build_target }}/release/bundle/**/*

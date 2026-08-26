@@ -2,6 +2,7 @@
 name = "gitwizard"
 version = "0.1.0"
 description = "Intent-driven Git workflow console"
+authors = ["anan <anwang13@outlook.com>"]
 edition = "2021"
 
 [lib]

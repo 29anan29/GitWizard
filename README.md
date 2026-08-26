@@ -1,6 +1,8 @@
 # GitWizard
 
-**Git 的自动化流程控制台** —— 意图驱动（Intent-Driven）的桌面 Git 工具。跟随步骤向导即可完成版本控制任务，无需记忆命令行。
+**Git 的自动化流程控制台** —— 意图驱动（Intent-Driven）的桌面 Git 工具。跟随步骤向导即可完成版本控制任务，无需记忆命令行，也**无需本机安装 Git**（内置静态链接的 libgit2 引擎）。
+
+> 联系 / Maintainer: anwang13@outlook.com
 
 ## 文档
 
