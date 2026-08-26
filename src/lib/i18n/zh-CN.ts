@@ -153,5 +153,10 @@ export const zhCN = {
 	'guard.noRepo.desc': '提交向导需要先在首页打开一个 Git 仓库。',
 	'push.needBranch': '当前处于分离 HEAD 状态，无法推送，请先切换到分支',
 	'lang.switch': 'EN',
-	'version.line': 'GitWizard v0.1.0 · MVP'
+	'auth.title': '推送鉴权',
+	'auth.desc': '此操作需要远端访问凭据（HTTPS）。填写一次即可自动记住。',
+	'auth.confirm': '保存并继续',
+	'auth.cancel': '取消',
+	'auth.required': '请填写认证用户名和访问令牌',
+	'version.line': 'GitWizard v{v}'
 };

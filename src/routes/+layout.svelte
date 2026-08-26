@@ -3,6 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import TitleBar from '$lib/components/TitleBar.svelte';
 	import ConsoleDrawer from '$lib/components/ConsoleDrawer.svelte';
+	import CredentialPrompt from '$lib/components/CredentialPrompt.svelte';
 	import { attachConsole } from '$lib/state/console.svelte';
 	import { initConfig, config } from '$lib/state/config.svelte';
 	import { startupUpdateCheck } from '$lib/state/update.svelte';
@@ -34,6 +35,8 @@
 </main>
 
 <ConsoleDrawer />
+
+<CredentialPrompt />
 
 <style>
 	main {

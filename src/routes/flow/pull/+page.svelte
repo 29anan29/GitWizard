@@ -14,6 +14,7 @@
 	import { repoStore, openDialog, refresh as refreshRepo } from '$lib/state/repo.svelte';
 	import { config } from '$lib/state/config.svelte';
 	import { resolveAuth } from '$lib/state/creds.svelte';
+	import { requestAuth } from '$lib/state/authPrompt.svelte';
 	import { git } from '$lib/services/git';
 	import type { PullOutcome } from '$lib/services/git';
 	import { i18n, t } from '$lib/i18n/index.svelte';
@@ -53,7 +54,7 @@
 		phase = 'running';
 		errorMsg = '';
 		try {
-			const auth = await resolveAuth();
+			const auth = await ensureAuth();
 			outcome = await git.pull(
 				info.path,
 				'origin',
@@ -64,7 +65,7 @@
 			await refreshRepo();
 
 			if (outcome.status !== 'conflict' && autoPush && (repoStore.info?.ahead ?? 0) > 0) {
-				const pushAuth = await resolveAuth();
+				const pushAuth = await ensureAuth();
 				if (!pushAuth) throw new Error('CRED_MISSING');
 				await git.push(
 					repoStore.info!.path,
@@ -102,6 +103,14 @@
 	}
 
 	let autoPush = $state(config.autoPush && (repoStore.info?.ahead ?? 0) > 0);
+
+	async function ensureAuth() {
+		let auth = await resolveAuth();
+		if (auth) return auth;
+		const ok = await requestAuth();
+		if (!ok) return null;
+		return resolveAuth();
+	}
 
 	precheck();
 </script>

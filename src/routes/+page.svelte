@@ -14,8 +14,12 @@
 	import wand from '$lib/assets/icons/wand.svg?raw';
 	import { repoStore, openDialog, openPath } from '$lib/state/repo.svelte';
 	import { config } from '$lib/state/config.svelte';
+	import { getVersion } from '@tauri-apps/api/app';
 	import { goto } from '$app/navigation';
 	import { t, type Key } from '$lib/i18n/index.svelte';
+
+	let appVersion = $state('');
+	getVersion().then((v) => (appVersion = v)).catch(() => {});
 
 	let opening = $state(false);
 	let openError = $state('');
@@ -173,7 +177,7 @@
 	{/if}
 
 	<footer class="foot">
-		<span>{t('version.line')}</span>
+		<span>{t('version.line', { v: appVersion || '…' })}</span>
 	</footer>
 </div>
 

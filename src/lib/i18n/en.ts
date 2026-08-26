@@ -160,5 +160,11 @@ export const en: Record<keyof typeof zhCN, string> = {
 	'guard.noRepo.desc': 'The commit wizard needs a Git repository opened from the home page.',
 	'push.needBranch': 'Detached HEAD state, cannot push. Switch to a branch first.',
 	'lang.switch': '中',
-	'version.line': 'GitWizard v0.1.0 · MVP'
+	'auth.title': 'Remote authentication',
+	'auth.desc':
+		'This action requires remote credentials (HTTPS). Enter them once and they will be remembered.',
+	'auth.confirm': 'Save and continue',
+	'auth.cancel': 'Cancel',
+	'auth.required': 'Please enter the auth username and access token',
+	'version.line': 'GitWizard v{v}'
 };

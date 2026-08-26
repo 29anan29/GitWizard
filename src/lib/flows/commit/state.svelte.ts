@@ -3,6 +3,7 @@ import { git } from '$lib/services/git';
 import { repoStore, refresh } from '$lib/state/repo.svelte';
 import { config } from '$lib/state/config.svelte';
 import { resolveAuth } from '$lib/state/creds.svelte';
+import { requestAuth } from '$lib/state/authPrompt.svelte';
 import { t } from '$lib/i18n/index.svelte';
 
 export type Phase = 'idle' | 'running' | 'success' | 'error';
@@ -23,6 +24,14 @@ function classifyError(raw: string): { kind: ErrorKind; msg: string } {
 
 function errorText(e: unknown): string {
 	return typeof e === 'string' ? e : e instanceof Error ? e.message : String(e);
+}
+
+async function ensureAuth() {
+	let auth = await resolveAuth();
+	if (auth) return auth;
+	const ok = await requestAuth();
+	if (!ok) return null;
+	return resolveAuth();
 }
 
 export function createWizard() {
@@ -100,7 +109,7 @@ export function createWizard() {
 
 			if (state.autoPush) {
 				if (!info.branch) throw new Error('DETACHED_HEAD');
-				const auth = await resolveAuth();
+				const auth = await ensureAuth();
 				if (!auth) throw new Error('CRED_MISSING');
 				await git.push(
 					info.path,
@@ -132,7 +141,7 @@ export function createWizard() {
 			state.phase = 'running';
 			try {
 				if (!info.branch) throw new Error('DETACHED_HEAD');
-				const auth = await resolveAuth();
+				const auth = await ensureAuth();
 				if (!auth) throw new Error('CRED_MISSING');
 				await git.push(
 					info.path,
@@ -167,7 +176,7 @@ export function createWizard() {
 		state.phase = 'running';
 		try {
 			if (!info.branch) throw new Error('DETACHED_HEAD');
-			const auth = await resolveAuth();
+			const auth = await ensureAuth();
 			if (!auth) throw new Error('CRED_MISSING');
 			await git.push(
 				info.path,
