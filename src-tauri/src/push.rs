@@ -4,19 +4,10 @@ use std::sync::Arc;
 type ProgressFn = Arc<dyn Fn(usize, usize) + Send + Sync>;
 type SidebandFn = Arc<dyn Fn(&str) + Send + Sync>;
 
-pub fn push(
-    repo: &Repository,
-    remote_name: &str,
-    branch: &str,
+pub(crate) fn auth_callbacks(
     username: Option<String>,
     password: Option<String>,
-    progress: ProgressFn,
-    sideband: SidebandFn,
-) -> Result<(), String> {
-    let mut remote = repo
-        .find_remote(remote_name)
-        .map_err(|e| format!("找不到远端 '{}': {}", remote_name, e.message()))?;
-
+) -> RemoteCallbacks<'static> {
     let mut attempts: u32 = 0;
     let mut cb = RemoteCallbacks::new();
     cb.credentials(move |_url, _user_from_url, allowed| {
@@ -40,6 +31,23 @@ pub fn push(
         }
         Err(git2::Error::from_str("不支持的凭据类型"))
     });
+    cb
+}
+
+pub fn push(
+    repo: &Repository,
+    remote_name: &str,
+    branch: &str,
+    username: Option<String>,
+    password: Option<String>,
+    progress: ProgressFn,
+    sideband: SidebandFn,
+) -> Result<(), String> {
+    let mut remote = repo
+        .find_remote(remote_name)
+        .map_err(|e| format!("找不到远端 '{}': {}", remote_name, e.message()))?;
+
+    let mut cb = auth_callbacks(username, password);
 
     cb.push_transfer_progress(move |cur, total, _bytes| progress(cur, total));
     let sideband2 = Arc::clone(&sideband);

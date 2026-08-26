@@ -24,7 +24,7 @@ pub fn commit(
     Ok(oid.to_string())
 }
 
-fn signature<'r>(
+pub(crate) fn signature<'r>(
     repo: &'r Repository,
     fallback_identity: Option<(&str, &str)>,
 ) -> Result<Signature<'r>, String> {
