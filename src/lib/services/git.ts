@@ -44,6 +44,14 @@ export interface UpdateInfo {
 	available: boolean;
 }
 
+export type PullStatus = 'up_to_date' | 'fast_forward' | 'merged' | 'conflict';
+
+export interface PullOutcome {
+	status: PullStatus;
+	conflicts: string[];
+	fetchedOid: string | null;
+}
+
 export const git = {
 	openDialog: (title: string) => invoke<string | null>('open_repo_dialog', { title }),
 	validate: (repoPath: string) => invoke<RepoInfo>('validate_repo', { repoPath }),
@@ -68,6 +76,20 @@ export const git = {
 		password: string | null
 	) =>
 		invoke<void>('push_remote', {
+			repoPath,
+			remoteName,
+			branch,
+			username,
+			password
+		}),
+	pull: (
+		repoPath: string,
+		remoteName: string,
+		branch: string,
+		username: string | null,
+		password: string | null
+	) =>
+		invoke<PullOutcome>('pull_branch', {
 			repoPath,
 			remoteName,
 			branch,

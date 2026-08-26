@@ -2,6 +2,7 @@ mod commands;
 pub mod commit;
 pub mod config;
 pub mod events;
+pub mod pull;
 pub mod push;
 pub mod repo;
 pub mod stage;
@@ -17,6 +18,7 @@ pub fn run() {
             commands::staged_summary,
             commands::commit_repo,
             commands::push_remote,
+            commands::pull_branch,
             commands::get_config,
             commands::save_config,
             commands::check_updates,

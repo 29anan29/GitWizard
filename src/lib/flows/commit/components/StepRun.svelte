@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Button from '$lib/components/Button.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import loader from '$lib/assets/icons/loader-2.svg?raw';
@@ -61,6 +62,9 @@
 			</details>
 			{#if s.errorKind === 'nonff'}
 				<p class="hint">{t('run.nonffHint')}</p>
+				<Button variant="accent" onclick={() => goto('/flow/pull')}>
+					{t('home.ahead.action')}
+				</Button>
 			{/if}
 			<div class="actions">
 				<Button variant="ghost" onclick={() => void wizard.retry()}>{t('common.retry')}</Button>

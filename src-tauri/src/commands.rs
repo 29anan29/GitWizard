@@ -1,4 +1,4 @@
-use crate::{commit as commit_mod, config as app_config, events, push, repo, stage};
+use crate::{commit as commit_mod, config as app_config, events, pull, push, repo, stage};
 use std::path::Path;
 use std::sync::Arc;
 use tauri::AppHandle;
@@ -138,6 +138,39 @@ pub async fn push_remote(
         push::push(&r, &remote_name, &branch, username, password, prog, sb)?;
         events::progress(&app_prog, 1, 1);
         Ok(())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn pull_branch(
+    app: AppHandle,
+    repo_path: String,
+    remote_name: String,
+    branch: String,
+    username: Option<String>,
+    password: Option<String>,
+) -> Result<pull::PullOutcome, String> {
+    events::cmd(
+        &app,
+        &format!("git pull --ff-only {remote_name} {branch}"),
+    );
+    let app_out = app.clone();
+    tokio::task::spawn_blocking(move || {
+        let r = repo::open(Path::new(&repo_path))?;
+        let identity = app_config::load();
+        let sb: Arc<dyn Fn(&str) + Send + Sync> =
+            Arc::new(move |line: &str| events::out(&app_out, line));
+        pull::pull(
+            &r,
+            &remote_name,
+            &branch,
+            username,
+            password,
+            identity.user_name.as_deref().zip(identity.user_email.as_deref()),
+            sb,
+        )
     })
     .await
     .map_err(|e| e.to_string())?

@@ -49,6 +49,7 @@
 		titleKey: Key;
 		descKey: Key;
 		enabled: boolean;
+		badge: () => number;
 		act?: () => void;
 	}
 
@@ -58,13 +59,21 @@
 			titleKey: 'cards.commit.title',
 			descKey: 'cards.commit.desc',
 			enabled: true,
+			badge: () => repoStore.info?.dirtyCount ?? 0,
 			act: () => goto('/flow/commit')
 		},
-		{ icon: download, titleKey: 'cards.pull.title', descKey: 'cards.pull.desc', enabled: false },
-		{ icon: gitBranch, titleKey: 'cards.branch.title', descKey: 'cards.branch.desc', enabled: false },
-		{ icon: gitMerge, titleKey: 'cards.merge.title', descKey: 'cards.merge.desc', enabled: false },
-		{ icon: history, titleKey: 'cards.reset.title', descKey: 'cards.reset.desc', enabled: false },
-		{ icon: bolt, titleKey: 'cards.quick.title', descKey: 'cards.quick.desc', enabled: false }
+		{
+			icon: download,
+			titleKey: 'cards.pull.title',
+			descKey: 'cards.pull.desc',
+			enabled: true,
+			badge: () => repoStore.info?.behind ?? 0,
+			act: () => goto('/flow/pull')
+		},
+		{ icon: gitBranch, titleKey: 'cards.branch.title', descKey: 'cards.branch.desc', enabled: false, badge: () => 0 },
+		{ icon: gitMerge, titleKey: 'cards.merge.title', descKey: 'cards.merge.desc', enabled: false, badge: () => 0 },
+		{ icon: history, titleKey: 'cards.reset.title', descKey: 'cards.reset.desc', enabled: false, badge: () => 0 },
+		{ icon: bolt, titleKey: 'cards.quick.title', descKey: 'cards.quick.desc', enabled: false, badge: () => 0 }
 	];
 
 	const info = $derived(repoStore.info);
@@ -150,14 +159,14 @@
 		<section class="cards">
 			{#each cardDefs as c, i (i)}
 				<div in:fly={{ y: 16, duration: 320, delay: 60 + i * 45 }}>
-					<ActionCard
-						icon={c.icon}
-						titleKey={c.titleKey}
-						descKey={c.descKey}
-						badge={c.enabled ? repoStore.info?.dirtyCount ?? 0 : 0}
-						enabled={c.enabled}
-						onclick={c.act}
-					/>
+				<ActionCard
+					icon={c.icon}
+					titleKey={c.titleKey}
+					descKey={c.descKey}
+					badge={c.badge()}
+					enabled={c.enabled}
+					onclick={c.act}
+				/>
 				</div>
 			{/each}
 		</section>
