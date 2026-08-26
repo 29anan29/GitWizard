@@ -36,7 +36,7 @@ jobs:
           - os: macos-latest
             targets: aarch64-apple-darwin,x86_64-apple-darwin
             build_target: universal-apple-darwin
-            bundles: dmg
+            bundles: dmg,app
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental == true }}
@@ -84,7 +84,9 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          APP="src-tauri/target/${{ matrix.build_target }}/release/bundle/macos/GitWizard.app"
+          APP=$(find src-tauri/target/${{ matrix.build_target }}/release/bundle -type d -name "GitWizard.app" | head -1)
+          if [ -z "$APP" ]; then APP=$(find src-tauri/target -type d -name "GitWizard.app" | head -1); fi
+          echo "Using app bundle: $APP"
           pkgbuild --component "$APP" --identifier dev.gitwizard.app --version "$VERSION" --install-location /Applications "GitWizard-${VERSION}.pkg"
 
       - name: Upload macOS pkg to release
