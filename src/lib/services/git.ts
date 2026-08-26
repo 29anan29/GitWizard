@@ -112,7 +112,15 @@ export const git = {
 		invoke<void>('save_credential', { username, password }),
 	loadCredential: (username: string) => invoke<string | null>('load_credential', { username }),
 	deleteCredential: (username: string) => invoke<void>('delete_credential', { username }),
-	listBranches: (repoPath: string) => invoke<BranchList>('list_branches', { repoPath })
+	listBranches: (repoPath: string) => invoke<BranchList>('list_branches', { repoPath }),
+	createBranch: (repoPath: string, name: string, switchTo: boolean) =>
+		invoke<void>('create_branch', { repoPath, name, switch: switchTo }),
+	checkoutBranch: (repoPath: string, name: string) =>
+		invoke<void>('checkout_branch', { repoPath, name }),
+	deleteBranch: (repoPath: string, name: string, force: boolean) =>
+		invoke<void>('delete_branch', { repoPath, name, force }),
+	renameBranch: (repoPath: string, oldName: string, newName: string) =>
+		invoke<void>('rename_branch', { repoPath, oldName, newName })
 };
 
 export interface LogLine {

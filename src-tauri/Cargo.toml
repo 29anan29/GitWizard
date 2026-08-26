@@ -1,6 +1,6 @@
 [package]
 name = "gitwizard"
-version = "0.5.0"
+version = "0.6.0"
 description = "Intent-driven Git workflow console"
 authors = ["anan <anwang13@outlook.com>"]
 edition = "2021"

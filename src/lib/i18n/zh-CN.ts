@@ -123,6 +123,28 @@ export const zhCN = {
 	'err.noCred':
 		'问题：还没有配置远端访问凭据，无法完成推送/拉取。\n怎么改：打开「设置 → Git 凭据」，填写认证用户名和个人访问令牌（PAT）后保存；GitHub 的 PAT 需勾选 repo 权限。',
 	'err.detail': '技术详情',
+	'branch.title': '分支管理',
+	'branch.new.label': '新建分支',
+	'branch.new.placeholder': '新分支名称，如 feat/login',
+	'branch.new.switch': '创建后切换',
+	'branch.new.create': '创建',
+	'branch.current': '当前',
+	'branch.switch': '切换',
+	'branch.rename': '重命名',
+	'branch.del': '删除',
+	'branch.confirmDel': '再次点击确认删除',
+	'branch.forceTitle': '该分支包含未合并的提交，普通删除会被拒绝。',
+	'branch.forceDelete': '强制删除（丢弃提交）',
+	'branch.checkoutRemoteHint': '本地不存在的分支会自动从 origin/{name} 检出并关联上游。',
+	'err.branchCurrent':
+		'问题：不能删除当前所在的分支。\n怎么改：先切换到其他分支（如 master），再执行删除。',
+	'err.branchUnmerged':
+		'问题：该分支包含尚未合并到其他分支的提交。\n怎么改：先合并这些提交；若确定要丢弃，可在分支管理中使用「强制删除」。',
+	'err.branchName':
+		'问题：分支名不合法。\n怎么改：避免空格与 ~ ^ : ? * [ \\ 等特殊字符，不要以 - 或 / 开头。',
+	'err.branchExists': '问题：同名分支已存在。\n怎么改：换一个分支名，或先删除旧分支。',
+	'err.branchNotFound':
+		'问题：找不到这个分支。\n怎么改：刷新列表确认分支是否存在；远端分支可直接输入名称检出。',
 	'settings.cred.title': 'Git 凭据',
 	'settings.cred.user': '认证用户名',
 	'settings.cred.token': '访问令牌（PAT）',

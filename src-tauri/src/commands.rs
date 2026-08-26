@@ -1,4 +1,7 @@
-use crate::{commit as commit_mod, config as app_config, credentials, events, pull, push, repo, stage};
+use crate::{
+    branch as branch_mod, commit as commit_mod, config as app_config, credentials, events, pull,
+    push, repo, stage,
+};
 use std::path::Path;
 use std::sync::Arc;
 use tauri::AppHandle;
@@ -333,6 +336,78 @@ pub async fn list_branches(repo_path: String) -> Result<BranchList, String> {
 
 fn err_msg(e: git2::Error) -> String {
     e.message().to_string()
+}
+
+#[tauri::command]
+pub async fn create_branch(
+    app: AppHandle,
+    repo_path: String,
+    name: String,
+    switch: bool,
+) -> Result<(), String> {
+    events::cmd(
+        &app,
+        &format!(
+            "git branch {name}{}",
+            if switch { " && git checkout <name>" } else { "" }
+        ),
+    );
+    tokio::task::spawn_blocking(move || {
+        let r = repo::open(Path::new(&repo_path))?;
+        branch_mod::create(&r, name.trim(), switch)
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn checkout_branch(
+    app: AppHandle,
+    repo_path: String,
+    name: String,
+) -> Result<(), String> {
+    events::cmd(&app, &format!("git checkout {name}"));
+    tokio::task::spawn_blocking(move || {
+        let r = repo::open(Path::new(&repo_path))?;
+        branch_mod::checkout(&r, name.trim())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn delete_branch(
+    app: AppHandle,
+    repo_path: String,
+    name: String,
+    force: bool,
+) -> Result<(), String> {
+    events::cmd(
+        &app,
+        &format!("git branch {}{name}", if force { "-D " } else { "-d " }),
+    );
+    tokio::task::spawn_blocking(move || {
+        let r = repo::open(Path::new(&repo_path))?;
+        branch_mod::delete(&r, name.trim(), force)
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn rename_branch(
+    app: AppHandle,
+    repo_path: String,
+    old_name: String,
+    new_name: String,
+) -> Result<(), String> {
+    events::cmd(&app, &format!("git branch -m {old_name} {new_name}"));
+    tokio::task::spawn_blocking(move || {
+        let r = repo::open(Path::new(&repo_path))?;
+        branch_mod::rename(&r, old_name.trim(), new_name.trim())
+    })
+    .await
+    .map_err(|e| e.to_string())?
 }
 
 fn summarize_paths(files: &[String]) -> String {

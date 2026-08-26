@@ -236,3 +236,49 @@ fn pull_refuses_dirty_worktree() {
     let msg = res.unwrap_err();
     assert!(msg.contains("WORKTREE_DIRTY"), "unexpected error: {msg}");
 }
+
+#[test]
+fn branch_create_switch_rename_delete_flow() {
+    use gitwizard_lib::branch as bw;
+
+    let (_guard, root) = setup();
+    write_file(&root, "init.txt", "base\n");
+    let repo = Repository::open(&root).unwrap();
+    sw::stage(&repo, &["init.txt".to_string()]).unwrap();
+    cw::commit(&repo, "c0", None).unwrap();
+
+    bw::create(&repo, "dev", false).unwrap_or_else(|e| panic!("create: {e}"));
+    assert_eq!(bw::current_branch(&repo).unwrap(), "master");
+
+    bw::checkout(&repo, "dev").unwrap_or_else(|e| panic!("checkout dev: {e}"));
+    assert_eq!(bw::current_branch(&repo).unwrap(), "dev");
+
+    write_file(&root, "dev.txt", "on dev\n");
+    sw::stage(&repo, &["dev.txt".to_string()]).unwrap();
+    cw::commit(&repo, "dev1", None).unwrap();
+
+    write_file(&root, "pending.txt", "dirty\n");
+    let err = bw::checkout(&repo, "master").unwrap_err();
+    assert!(err.contains("WORKTREE_DIRTY"), "unexpected: {err}");
+    std::fs::remove_file(root.join("pending.txt")).unwrap();
+
+    bw::checkout(&repo, "master").unwrap_or_else(|e| panic!("back to master: {e}"));
+    assert!(!root.join("dev.txt").exists());
+
+    let err = bw::delete(&repo, "dev", false).unwrap_err();
+    assert!(err.contains("BRANCH_UNMERGED"), "unexpected: {err}");
+
+    bw::delete(&repo, "dev", true).unwrap_or_else(|e| panic!("force delete: {e}"));
+
+    bw::create(&repo, "tmp-a", false).unwrap();
+    bw::rename(&repo, "tmp-a", "tmp-b").unwrap_or_else(|e| panic!("rename: {e}"));
+    assert!(bw::rename(&repo, "tmp-b", "master").is_err());
+    bw::delete(&repo, "tmp-b", true).unwrap();
+
+    let err = bw::delete(&repo, "master", false).unwrap_err();
+    assert!(err.contains("BRANCH_CURRENT"), "unexpected: {err}");
+
+    assert!(bw::validate_name("bad name").is_err());
+    assert!(bw::validate_name("-lead").is_err());
+    assert!(bw::validate_name("ok/feat-1").is_ok());
+}

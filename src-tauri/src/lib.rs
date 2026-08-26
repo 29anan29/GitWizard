@@ -1,4 +1,5 @@
 mod commands;
+pub mod branch;
 pub mod commit;
 pub mod config;
 pub mod credentials;
@@ -27,7 +28,11 @@ pub fn run() {
             commands::save_credential,
             commands::load_credential,
             commands::delete_credential,
-            commands::list_branches
+            commands::list_branches,
+            commands::create_branch,
+            commands::checkout_branch,
+            commands::delete_branch,
+            commands::rename_branch
         ])
         .run(tauri::generate_context!())
         .expect("failed to run gitwizard");

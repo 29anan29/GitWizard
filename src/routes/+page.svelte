@@ -74,7 +74,7 @@
 			badge: () => repoStore.info?.behind ?? 0,
 			act: () => goto('/flow/pull')
 		},
-		{ icon: gitBranch, titleKey: 'cards.branch.title', descKey: 'cards.branch.desc', enabled: false, badge: () => 0 },
+		{ icon: gitBranch, titleKey: 'cards.branch.title', descKey: 'cards.branch.desc', enabled: true, badge: () => 0, act: () => goto('/flow/branch') },
 		{ icon: gitMerge, titleKey: 'cards.merge.title', descKey: 'cards.merge.desc', enabled: false, badge: () => 0 },
 		{ icon: history, titleKey: 'cards.reset.title', descKey: 'cards.reset.desc', enabled: false, badge: () => 0 },
 		{ icon: bolt, titleKey: 'cards.quick.title', descKey: 'cards.quick.desc', enabled: false, badge: () => 0 }

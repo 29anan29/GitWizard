@@ -130,6 +130,29 @@ export const en: Record<keyof typeof zhCN, string> = {
 	'err.noCred':
 		'Problem: no remote credentials configured, push/pull cannot proceed.\nFix: open Settings → Git Credentials, enter your auth username and a Personal Access Token (PAT) and save; for GitHub grant the repo scope.',
 	'err.detail': 'Technical details',
+	'branch.title': 'Branches',
+	'branch.new.label': 'New branch',
+	'branch.new.placeholder': 'new branch name, e.g. feat/login',
+	'branch.new.switch': 'Switch after create',
+	'branch.new.create': 'Create',
+	'branch.current': 'current',
+	'branch.switch': 'Switch',
+	'branch.rename': 'Rename',
+	'branch.del': 'Delete',
+	'branch.confirmDel': 'Click again to confirm deletion',
+	'branch.forceTitle': 'This branch has unmerged commits — a plain delete is refused.',
+	'branch.forceDelete': 'Force delete (discard commits)',
+	'branch.checkoutRemoteHint':
+		'Branches that do not exist locally are checked out from origin/{name} with upstream linked.',
+	'err.branchCurrent':
+		'Problem: cannot delete the branch you are currently on.\nFix: switch to another branch (e.g. master) first, then delete.',
+	'err.branchUnmerged':
+		'Problem: this branch has commits not merged anywhere else.\nFix: merge them first; if you really want to discard them, use Force delete in Branches.',
+	'err.branchName':
+		'Problem: invalid branch name.\nFix: avoid spaces and ~ ^ : ? * [ \\ characters; do not start with - or /. ',
+	'err.branchExists': 'Problem: a branch with this name already exists.\nFix: pick another name or delete the old one first.',
+	'err.branchNotFound':
+		'Problem: branch not found.\nFix: refresh the list to confirm it exists; remote branches can be checked out by typing their name.',
 	'settings.cred.title': 'Git credentials',
 	'settings.cred.user': 'Auth username',
 	'settings.cred.token': 'Access token (PAT)',
