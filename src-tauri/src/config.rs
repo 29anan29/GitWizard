@@ -13,6 +13,7 @@ pub struct AppConfig {
     pub commit_prefixes: Vec<String>,
     pub update_proxy: Option<String>,
     pub auto_check_update: bool,
+    pub credential_username: Option<String>,
 }
 
 impl Default for AppConfig {
@@ -29,6 +30,7 @@ impl Default for AppConfig {
                 .collect(),
             update_proxy: None,
             auto_check_update: true,
+            credential_username: None,
         }
     }
 }

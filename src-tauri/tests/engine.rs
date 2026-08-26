@@ -142,6 +142,7 @@ fn setup_pull_sandbox() -> PullSandbox {
         &ra,
         "origin",
         "master",
+        "master",
         None,
         None,
         Arc::new(|_, _| {}),
@@ -182,6 +183,7 @@ fn pull_fast_forward_and_merge_and_dirty_guard() {
         &ra,
         "origin",
         "master",
+        "master",
         None,
         None,
         Arc::new(|_, _| {}),
@@ -206,6 +208,7 @@ fn pull_fast_forward_and_merge_and_dirty_guard() {
     ph::push(
         &ra,
         "origin",
+        "master",
         "master",
         None,
         None,

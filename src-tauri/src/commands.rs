@@ -1,4 +1,4 @@
-use crate::{commit as commit_mod, config as app_config, events, pull, push, repo, stage};
+use crate::{commit as commit_mod, config as app_config, credentials, events, pull, push, repo, stage};
 use std::path::Path;
 use std::sync::Arc;
 use tauri::AppHandle;
@@ -122,10 +122,17 @@ pub async fn push_remote(
     repo_path: String,
     remote_name: String,
     branch: String,
+    target_branch: Option<String>,
     username: Option<String>,
     password: Option<String>,
 ) -> Result<(), String> {
-    events::cmd(&app, &format!("git push {remote_name} {branch}"));
+    let dst = target_branch.clone().unwrap_or_else(|| branch.clone());
+    let log_line = if dst == branch {
+        format!("git push {remote_name} {branch}")
+    } else {
+        format!("git push {remote_name} refs/heads/{branch}:refs/heads/{dst}")
+    };
+    events::cmd(&app, &log_line);
     let app_out = app.clone();
     let app_prog = app.clone();
     tokio::task::spawn_blocking(move || {
@@ -135,7 +142,7 @@ pub async fn push_remote(
             Arc::new(move |c, t| events::progress(&prog_app, c, t));
         let sb: Arc<dyn Fn(&str) + Send + Sync> =
             Arc::new(move |line: &str| events::out(&app_out, line));
-        push::push(&r, &remote_name, &branch, username, password, prog, sb)?;
+        push::push(&r, &remote_name, &branch, &dst, username, password, prog, sb)?;
         events::progress(&app_prog, 1, 1);
         Ok(())
     })
@@ -271,6 +278,61 @@ pub fn open_external(url: String) -> Result<(), String> {
         return Err("仅允许打开 https 链接".to_string());
     }
     open::that(url).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn save_credential(username: String, password: String) -> Result<(), String> {
+    credentials::save(username, password)
+}
+
+#[tauri::command]
+pub fn load_credential(username: String) -> Result<Option<String>, String> {
+    credentials::load(username)
+}
+
+#[tauri::command]
+pub fn delete_credential(username: String) -> Result<(), String> {
+    credentials::delete(username)
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BranchList {
+    pub local: Vec<String>,
+    pub remote: Vec<String>,
+}
+
+#[tauri::command]
+pub async fn list_branches(repo_path: String) -> Result<BranchList, String> {
+    use git2::BranchType;
+    tokio::task::spawn_blocking(move || {
+        let r = repo::open(Path::new(&repo_path))?;
+        let mut local: Vec<String> = r
+            .branches(Some(BranchType::Local))
+            .map_err(err_msg)?
+            .filter_map(|b| b.ok())
+            .map(|(b, _)| b.name().unwrap_or(None).unwrap_or("").to_string())
+            .filter(|s| !s.is_empty())
+            .collect();
+        let mut remote: Vec<String> = r
+            .branches(Some(BranchType::Remote))
+            .map_err(err_msg)?
+            .filter_map(|b| b.ok())
+            .map(|(b, _)| b.name().unwrap_or(None).unwrap_or("").to_string())
+            .filter(|s| s.starts_with("origin/") && !s.ends_with("HEAD"))
+            .map(|s| s.trim_start_matches("origin/").to_string())
+            .collect();
+        local.sort();
+        local.dedup();
+        remote.sort();
+        remote.dedup();
+        Ok(BranchList { local, remote })
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
+fn err_msg(e: git2::Error) -> String {
+    e.message().to_string()
 }
 
 fn summarize_paths(files: &[String]) -> String {

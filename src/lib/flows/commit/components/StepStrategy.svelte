@@ -1,13 +1,30 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Button from '$lib/components/Button.svelte';
 	import chevronDown from '$lib/assets/icons/chevron-down.svg?raw';
 	import { repoStore } from '$lib/state/repo.svelte';
+	import { git, type BranchList } from '$lib/services/git';
 	import { t } from '$lib/i18n/index.svelte';
 	import type { Wizard } from '../state.svelte';
 
 	let { wizard, onexecute }: { wizard: Wizard; onexecute: () => void } = $props();
 
 	let showCmd = $state(false);
+	let branches = $state<BranchList>({ local: [], remote: [] });
+
+	onMount(() => {
+		const info = repoStore.info;
+		if (!info) return;
+		git
+			.listBranches(info.path)
+			.then((b) => {
+				branches = b;
+				if (!wizard.state.pushTarget) {
+					wizard.state.pushTarget = info.branch ?? branches.local[0] ?? '';
+				}
+			})
+			.catch(() => {});
+	});
 
 	const cmds = $derived.by(() => {
 		const info = repoStore.info;
@@ -58,6 +75,29 @@
 		>
 			<span class="knob"></span>
 		</button>
+	</div>
+
+	<div class="targetrow">
+		<span class="tlabel">{t('strategy.pushTarget')}</span>
+		<select bind:value={wizard.state.pushTarget} disabled={!wizard.state.autoPush}>
+			<optgroup label={t('strategy.groupLocal')}>
+				{#each branches.local as b (b)}
+					<option value={b}>{b}</option>
+				{/each}
+			</optgroup>
+			{#if branches.remote.length}
+				<optgroup label="origin">
+					{#each branches.remote as b (b)}
+						<option value={b}>{b}</option>
+					{/each}
+				</optgroup>
+			{/if}
+		</select>
+		{#if wizard.state.pushTarget && repoStore.info?.branch && wizard.state.pushTarget !== repoStore.info.branch}
+			<span class="crosswarn">
+				{repoStore.info.branch} → {wizard.state.pushTarget}
+			</span>
+		{/if}
 	</div>
 
 	<div class="preview">
@@ -194,6 +234,47 @@
 	.switch:focus-visible {
 		outline: none;
 		box-shadow: var(--shadow-focus);
+	}
+
+	.targetrow {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		flex-wrap: wrap;
+		padding: 12px 16px;
+		background: var(--surface-300);
+		box-shadow: rgba(38, 37, 30, 0.08) 0 0 0 1px inset;
+		border-radius: var(--radius-comfortable);
+	}
+	.tlabel {
+		font-size: 13px;
+		color: var(--text-secondary);
+	}
+	select {
+		font-family: var(--font-mono);
+		font-size: 12px;
+		color: var(--color-text);
+		background: var(--surface-100);
+		border: 1px solid var(--border-subtle);
+		border-radius: var(--radius-standard);
+		padding: 6px 10px;
+		outline: none;
+		cursor: pointer;
+	}
+	select:focus {
+		border-color: var(--color-accent);
+	}
+	select:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+	.crosswarn {
+		font-family: var(--font-mono);
+		font-size: 11px;
+		color: var(--color-accent);
+		background: rgba(245, 78, 0, 0.08);
+		padding: 4px 10px;
+		border-radius: var(--radius-pill);
 	}
 
 	.preview {

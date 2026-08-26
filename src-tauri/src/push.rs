@@ -38,6 +38,7 @@ pub fn push(
     repo: &Repository,
     remote_name: &str,
     branch: &str,
+    target: &str,
     username: Option<String>,
     password: Option<String>,
     progress: ProgressFn,
@@ -66,7 +67,11 @@ pub fn push(
     opts.remote_callbacks(cb);
     opts.packbuilder_parallelism(0);
 
-    let refspec = format!("refs/heads/{b}:refs/heads/{b}", b = branch);
+    let refspec = format!(
+        "refs/heads/{s}:refs/heads/{t}",
+        s = branch,
+        t = target
+    );
     remote
         .push(&[refspec.as_str()], Some(&mut opts))
         .map_err(classify_push_err)?;

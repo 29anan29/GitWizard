@@ -1,6 +1,6 @@
 [package]
 name = "gitwizard"
-version = "0.3.0"
+version = "0.4.0"
 description = "Intent-driven Git workflow console"
 authors = ["anan <anwang13@outlook.com>"]
 edition = "2021"
@@ -20,8 +20,13 @@ git2 = { version = "0.20", features = ["ssh", "https", "vendored-libgit2", "vend
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
 confy = "0.6"
 rfd = "0.15"
-ureq = { version = "2", features = ["json"] }
+ureq = { version = "2", features = ["json", "socks-proxy"] }
 open = "5"
+keyring = { version = "3", default-features = false, features = [
+    "apple-native",
+    "windows-native",
+    "sync-secret-service"
+] }
 
 [dev-dependencies]
 tempfile = "3"

@@ -13,6 +13,7 @@
 	import { friendlyErrorKey } from '$lib/flows/commit/errors';
 	import { repoStore, openDialog, refresh as refreshRepo } from '$lib/state/repo.svelte';
 	import { config } from '$lib/state/config.svelte';
+	import { resolveAuth } from '$lib/state/creds.svelte';
 	import { git } from '$lib/services/git';
 	import type { PullOutcome } from '$lib/services/git';
 	import { i18n, t } from '$lib/i18n/index.svelte';
@@ -52,22 +53,26 @@
 		phase = 'running';
 		errorMsg = '';
 		try {
+			const auth = await resolveAuth();
 			outcome = await git.pull(
 				info.path,
 				'origin',
 				info.branch,
-				config.userName,
-				config.userEmail
+				auth?.username ?? null,
+				auth?.password ?? null
 			);
 			await refreshRepo();
 
 			if (outcome.status !== 'conflict' && autoPush && (repoStore.info?.ahead ?? 0) > 0) {
+				const pushAuth = await resolveAuth();
+				if (!pushAuth) throw new Error('CRED_MISSING');
 				await git.push(
 					repoStore.info!.path,
 					'origin',
 					repoStore.info!.branch!,
-					config.userName,
-					config.userEmail
+					null,
+					pushAuth.username,
+					pushAuth.password
 				);
 				pushedToo = true;
 				await refreshRepo();

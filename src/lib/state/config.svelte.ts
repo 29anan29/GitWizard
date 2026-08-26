@@ -9,7 +9,8 @@ const defaults: AppConfig = {
 	recentRepos: [],
 	commitPrefixes: ['feat', 'fix', 'docs', 'chore', 'refactor', 'test'],
 	updateProxy: null,
-	autoCheckUpdate: true
+	autoCheckUpdate: true,
+	credentialUsername: null
 };
 
 export const config = $state<AppConfig>({ ...defaults });

@@ -6,6 +6,7 @@
 	import x from '$lib/assets/icons/x.svg?raw';
 	import Icon from './Icon.svelte';
 	import { config, persistConfig } from '$lib/state/config.svelte';
+	import { credStore } from '$lib/state/creds.svelte';
 	import { git, type UpdateInfo } from '$lib/services/git';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 
@@ -19,6 +20,11 @@
 	let autoPush = $state(config.autoPush);
 	let updateProxy = $state(config.updateProxy ?? '');
 	let autoCheck = $state(config.autoCheckUpdate);
+	let credUser = $state(config.credentialUsername ?? '');
+	let credToken = $state('');
+	let credRemember = $state(true);
+	let credSaved = $state(false);
+	let credFail = $state('');
 
 	let appVersion = $state('');
 	getVersion().then((v) => (appVersion = v)).catch(() => {});
@@ -33,8 +39,30 @@
 		config.autoPush = autoPush;
 		config.updateProxy = updateProxy.trim() || null;
 		config.autoCheckUpdate = autoCheck;
+		config.credentialUsername = credUser.trim() || null;
 		await persistConfig();
 		onclose();
+	}
+
+	async function saveCreds(): Promise<void> {
+		const u = credUser.trim();
+		config.credentialUsername = u || null;
+		await persistConfig();
+		if (!u || !credToken) return;
+		try {
+			if (credRemember) {
+				await git.saveCredential(u, credToken);
+			}
+			credStore.sessionToken = credToken;
+			credStore.keyringUnavailable = false;
+			credSaved = true;
+			credFail = '';
+			setTimeout(() => (credSaved = false), 2500);
+		} catch (e) {
+			credStore.sessionToken = credToken;
+			credStore.keyringUnavailable = true;
+			credFail = String(e);
+		}
 	}
 
 	function setLocale(l: 'zh-CN' | 'en'): void {
@@ -86,6 +114,44 @@
 			<input id="useremail" type="email" bind:value={userEmail} placeholder="you@example.com" spellcheck="false" />
 			<span class="hint">{t('settings.identityHint')}</span>
 		</div>
+
+		<div class="divider"></div>
+
+		<div class="updatesec">
+			<span class="label">{t('settings.cred.title')}</span>
+			<div class="credgrid">
+				<div class="field">
+					<label for="credu">{t('settings.cred.user')}</label>
+					<input id="credu" type="text" bind:value={credUser} placeholder="username" spellcheck="false" autocomplete="off" />
+				</div>
+				<div class="field">
+					<label for="credt">{t('settings.cred.token')}</label>
+					<input
+						id="credt"
+						type="password"
+						bind:value={credToken}
+						placeholder={t('settings.cred.tokenPh')}
+						spellcheck="false"
+						autocomplete="off"
+					/>
+				</div>
+			</div>
+			<span class="hint">{t('settings.cred.hint')}</span>
+			<label class="checkrow small">
+				<input type="checkbox" bind:checked={credRemember} />
+				<span class="box" aria-hidden="true"></span>
+				{t('settings.cred.remember')}
+			</label>
+			{#if credSaved}
+				<span class="verstate ok">{t('settings.cred.saved')}</span>
+			{/if}
+			{#if credFail || credStore.keyringUnavailable}
+				<p class="checkfail">{t('settings.cred.keyringFail')}</p>
+			{/if}
+			<Button variant="ghost" onclick={saveCreds}>{t('settings.cred.save')}</Button>
+		</div>
+
+		<div class="divider"></div>
 
 		<div class="field">
 			<span class="label">{t('settings.locale')}</span>
@@ -316,6 +382,13 @@
 		flex-direction: column;
 		gap: 10px;
 		align-items: flex-start;
+	}
+
+	.credgrid {
+		display: grid;
+		grid-template-columns: 1fr 1.4fr;
+		gap: 10px;
+		width: 100%;
 	}
 	.verrow {
 		display: flex;

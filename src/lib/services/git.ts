@@ -35,6 +35,12 @@ export interface AppConfig {
 	commitPrefixes: string[];
 	updateProxy: string | null;
 	autoCheckUpdate: boolean;
+	credentialUsername: string | null;
+}
+
+export interface BranchList {
+	local: string[];
+	remote: string[];
 }
 
 export interface UpdateInfo {
@@ -72,6 +78,7 @@ export const git = {
 		repoPath: string,
 		remoteName: string,
 		branch: string,
+		targetBranch: string | null,
 		username: string | null,
 		password: string | null
 	) =>
@@ -79,6 +86,7 @@ export const git = {
 			repoPath,
 			remoteName,
 			branch,
+			targetBranch,
 			username,
 			password
 		}),
@@ -99,7 +107,12 @@ export const git = {
 	getConfig: () => invoke<AppConfig>('get_config'),
 	saveConfig: (config: AppConfig) => invoke<void>('save_config', { config }),
 	checkUpdates: (proxy: string | null) => invoke<UpdateInfo>('check_updates', { proxy }),
-	openExternal: (url: string) => invoke<void>('open_external', { url })
+	openExternal: (url: string) => invoke<void>('open_external', { url }),
+	saveCredential: (username: string, password: string) =>
+		invoke<void>('save_credential', { username, password }),
+	loadCredential: (username: string) => invoke<string | null>('load_credential', { username }),
+	deleteCredential: (username: string) => invoke<void>('delete_credential', { username }),
+	listBranches: (repoPath: string) => invoke<BranchList>('list_branches', { repoPath })
 };
 
 export interface LogLine {

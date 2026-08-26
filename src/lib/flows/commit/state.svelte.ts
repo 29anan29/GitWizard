@@ -2,12 +2,16 @@ import { SvelteSet } from 'svelte/reactivity';
 import { git } from '$lib/services/git';
 import { repoStore, refresh } from '$lib/state/repo.svelte';
 import { config } from '$lib/state/config.svelte';
+import { resolveAuth } from '$lib/state/creds.svelte';
 import { t } from '$lib/i18n/index.svelte';
 
 export type Phase = 'idle' | 'running' | 'success' | 'error';
 export type ErrorKind = 'none' | 'nonff' | 'generic';
 
 function classifyError(raw: string): { kind: ErrorKind; msg: string } {
+	if (raw === 'CRED_MISSING') {
+		return { kind: 'generic', msg: t('err.noCred') };
+	}
 	if (raw === 'DETACHED_HEAD') {
 		return { kind: 'generic', msg: t('push.needBranch') };
 	}
@@ -30,6 +34,7 @@ export function createWizard() {
 		message: '',
 		prefix: '',
 		autoPush: config.autoPush,
+		pushTarget: '',
 		phase: 'idle' as Phase,
 		oid: '',
 		pushed: false,
@@ -95,7 +100,16 @@ export function createWizard() {
 
 			if (state.autoPush) {
 				if (!info.branch) throw new Error('DETACHED_HEAD');
-				await git.push(info.path, 'origin', info.branch, config.userName, config.userEmail);
+				const auth = await resolveAuth();
+				if (!auth) throw new Error('CRED_MISSING');
+				await git.push(
+					info.path,
+					'origin',
+					info.branch,
+					state.pushTarget || null,
+					auth.username,
+					auth.password
+				);
 				state.pushed = true;
 			}
 			state.phase = 'success';
@@ -118,7 +132,16 @@ export function createWizard() {
 			state.phase = 'running';
 			try {
 				if (!info.branch) throw new Error('DETACHED_HEAD');
-				await git.push(info.path, 'origin', info.branch, config.userName, config.userEmail);
+				const auth = await resolveAuth();
+				if (!auth) throw new Error('CRED_MISSING');
+				await git.push(
+					info.path,
+					'origin',
+					info.branch,
+					state.pushTarget || null,
+					auth.username,
+					auth.password
+				);
 				state.pushed = true;
 				state.phase = 'success';
 				await refresh();
@@ -144,7 +167,16 @@ export function createWizard() {
 		state.phase = 'running';
 		try {
 			if (!info.branch) throw new Error('DETACHED_HEAD');
-			await git.push(info.path, 'origin', info.branch, config.userName, config.userEmail);
+			const auth = await resolveAuth();
+			if (!auth) throw new Error('CRED_MISSING');
+			await git.push(
+				info.path,
+				'origin',
+				info.branch,
+				state.pushTarget || null,
+				auth.username,
+				auth.password
+			);
 			state.pushed = true;
 			state.phase = 'success';
 			await refresh();
@@ -164,6 +196,7 @@ export function createWizard() {
 		state.message = '';
 		state.prefix = '';
 		state.autoPush = config.autoPush;
+		state.pushTarget = '';
 		state.phase = 'idle';
 		state.oid = '';
 		state.pushed = false;
