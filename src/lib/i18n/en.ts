@@ -78,12 +78,46 @@ export const en: Record<keyof typeof zhCN, string> = {
 	'run.successTitle': 'Commit completed',
 	'run.pushed': 'Pushed to remote',
 	'run.notPushed': 'Local commit only, not pushed',
-	'run.partialTitle': 'Committed, but push failed',
+	'run.partialTitle': 'Local commit created, but not pushed yet',
 	'run.failedTitle': 'Execution failed',
 	'run.backHome': 'Back to home',
 	'run.newCommit': 'Make another commit',
 	'run.nonffHint':
 		'The remote has new commits and rejected the push. You need to pull and merge first. The pull workflow is coming soon; for now run: git pull --rebase',
+	'files.empty.push': 'Push local commits',
+	'home.ahead.title': '{n} local commits waiting to be pushed',
+	'home.ahead.desc':
+		'The previous commit succeeded but the push did not finish. Open the commit wizard to retry the push in one click.',
+	'home.ahead.action': 'Push now',
+	'err.nonff':
+		'Problem: the remote branch has commits you do not have locally, so the push was rejected.\nFix: pull and merge first (git pull --rebase), resolve any conflicts, then push again.',
+	'err.auth':
+		'Problem: authentication failed — wrong username or token.\nFix: verify your account in Settings; for GitHub use a Personal Access Token (with repo scope) as the password, created under Settings → Developer settings → Tokens.',
+	'err.forbidden':
+		'Problem: insufficient permission to push to this repository.\nFix: make sure the remote URL points to your own repo, or ask an administrator to grant you Write access.',
+	'err.repoNotFound':
+		'Problem: remote repository not found — the URL may be mistyped or the account lacks access.\nFix: check the origin URL (git remote -v) and correct it.',
+	'err.noRemote':
+		'Problem: no remote named origin is configured.\nFix: run git remote add origin <url> in a terminal (graphical remotes management is coming soon).',
+	'err.network':
+		'Problem: cannot reach the remote server — network down, blocked by firewall, or DNS failure.\nFix: check your connection or VPN, then retry.',
+	'err.ssl':
+		'Problem: SSL/TLS certificate verification failed.\nFix: verify your system clock is correct; if you are behind an inspected network, switch to a trusted one and retry.',
+	'err.proxy':
+		'Problem: invalid proxy configuration.\nFix: proxy must start with http:// or https:// and include the port, e.g. http://127.0.0.1:7890.',
+	'err.generic':
+		'Problem: the operation did not complete.\nFix: inspect the technical details below; common causes are expired credentials or network hiccups — fix them and press Retry.',
+	'err.detail': 'Technical details',
+	'settings.update.title': 'Software updates',
+	'settings.update.auto': 'Check for updates at startup',
+	'settings.update.proxyLabel': 'Update check proxy (optional)',
+	'settings.update.check': 'Check for updates',
+	'settings.update.checking': 'Checking…',
+	'settings.update.uptodate': 'You are up to date',
+	'settings.update.new': 'New version available',
+	'settings.update.openRelease': 'Open release page',
+	'settings.update.fail': 'Check failed',
+	'header.newVersion': 'v{v} available',
 	'suggest.docs': 'docs: update {n} documentation files',
 	'suggest.test': 'test: update tests ({list})',
 	'suggest.feat': 'feat: change {n} source files ({list})',

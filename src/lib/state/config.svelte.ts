@@ -1,4 +1,5 @@
-import { git, type AppConfig } from '$lib/services/git';
+import { git, type UpdateInfo } from '$lib/services/git';
+import type { AppConfig } from '$lib/services/git';
 
 const defaults: AppConfig = {
 	locale: 'zh-CN',
@@ -6,7 +7,9 @@ const defaults: AppConfig = {
 	userEmail: null,
 	autoPush: true,
 	recentRepos: [],
-	commitPrefixes: ['feat', 'fix', 'docs', 'chore', 'refactor', 'test']
+	commitPrefixes: ['feat', 'fix', 'docs', 'chore', 'refactor', 'test'],
+	updateProxy: null,
+	autoCheckUpdate: true
 };
 
 export const config = $state<AppConfig>({ ...defaults });

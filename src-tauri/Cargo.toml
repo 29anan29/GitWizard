@@ -20,6 +20,8 @@ git2 = { version = "0.20", features = ["ssh", "https", "vendored-libgit2", "vend
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
 confy = "0.6"
 rfd = "0.15"
+ureq = { version = "2", features = ["json"] }
+open = "5"
 
 [dev-dependencies]
 tempfile = "3"

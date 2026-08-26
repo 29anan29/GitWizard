@@ -17,6 +17,18 @@
 		<Icon svg={fileText} size={36} />
 		<h2>{t('files.empty.title')}</h2>
 		<p>{t('files.empty.desc')}</p>
+		{#if (repoStore.info?.ahead ?? 0) > 0}
+			<Button
+				variant="surface"
+				onclick={() => {
+					wizard.state.step = 4;
+					void wizard.pushOnly();
+				}}
+			>
+				{t('files.empty.push')}
+			</Button>
+			<span class="aheadnote">{t('status.ahead', { n: repoStore.info!.ahead })}</span>
+		{/if}
 	</div>
 {:else}
 	<FileList
@@ -67,6 +79,14 @@
 		font-family: var(--font-serif);
 		font-size: 15.5px;
 		max-width: 380px;
+	}
+	.aheadnote {
+		font-family: var(--font-mono);
+		font-size: 11px;
+		color: var(--color-gold);
+		background: rgba(192, 133, 50, 0.1);
+		padding: 4px 11px;
+		border-radius: var(--radius-pill);
 	}
 
 	.bar {

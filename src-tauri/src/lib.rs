@@ -18,7 +18,9 @@ pub fn run() {
             commands::commit_repo,
             commands::push_remote,
             commands::get_config,
-            commands::save_config
+            commands::save_config,
+            commands::check_updates,
+            commands::open_external
         ])
         .run(tauri::generate_context!())
         .expect("failed to run gitwizard");

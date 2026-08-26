@@ -161,6 +161,85 @@ fn shell_quote(s: &str) -> String {
     format!("'{}'", s.replace('\'', "'\\''"))
 }
 
+#[derive(Debug, Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UpdateInfo {
+    pub current: String,
+    pub latest_tag: Option<String>,
+    pub release_url: String,
+    pub available: bool,
+}
+
+fn version_triplet(v: &str) -> (u64, u64, u64) {
+    let mut it = v.trim().split('.').map(|part| {
+        part.chars()
+            .take_while(|c| c.is_ascii_digit())
+            .collect::<String>()
+            .parse::<u64>()
+            .unwrap_or(0)
+    });
+    (
+        it.next().unwrap_or(0),
+        it.next().unwrap_or(0),
+        it.next().unwrap_or(0),
+    )
+}
+
+#[tauri::command]
+pub async fn check_updates(proxy: Option<String>) -> Result<UpdateInfo, String> {
+    tokio::task::spawn_blocking(move || {
+        const CURRENT: &str = env!("CARGO_PKG_VERSION");
+        let mut builder = ureq::AgentBuilder::new().timeout(std::time::Duration::from_secs(12));
+        if let Some(p) = proxy.as_deref().map(str::trim).filter(|s| !s.is_empty()) {
+            let pr = ureq::Proxy::new(p).map_err(|e| format!("PROXY:{e}"))?;
+            builder = builder.proxy(pr);
+        }
+        let agent = builder.build();
+        let resp = agent
+            .get("https://api.github.com/repos/29anan29/GitWizard/releases/latest")
+            .set("User-Agent", "gitwizard-update-check")
+            .set("Accept", "application/vnd.github+json")
+            .call()
+            .map_err(|e| match e {
+                ureq::Error::Status(code, _) => format!("HTTP:{code}"),
+                other => format!("NET:{other}"),
+            })?;
+        let body = resp.into_string().map_err(|e| format!("READ:{e}"))?;
+        let v: serde_json::Value =
+            serde_json::from_str(&body).map_err(|e| format!("PARSE:{e}"))?;
+        let tag = v
+            .get("tag_name")
+            .and_then(|x| x.as_str())
+            .unwrap_or("")
+            .trim_start_matches('v')
+            .to_string();
+        let url = v
+            .get("html_url")
+            .and_then(|x| x.as_str())
+            .unwrap_or("https://github.com/29anan29/GitWizard/releases")
+            .to_string();
+
+        let cur = version_triplet(CURRENT);
+        let lat = version_triplet(&tag);
+        Ok(UpdateInfo {
+            current: CURRENT.to_string(),
+            latest_tag: if tag.is_empty() { None } else { Some(tag) },
+            release_url: url,
+            available: lat > cur,
+        })
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub fn open_external(url: String) -> Result<(), String> {
+    if !url.starts_with("https://") {
+        return Err("仅允许打开 https 链接".to_string());
+    }
+    open::that(url).map_err(|e| e.to_string())
+}
+
 fn summarize_paths(files: &[String]) -> String {
     const MAX: usize = 5;
     let shown: Vec<&str> = files.iter().take(MAX).map(|s| s.as_str()).collect();

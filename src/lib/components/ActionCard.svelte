@@ -60,14 +60,21 @@ interface Props {
 	}
 
 	.icon {
-		width: 40px;
-		height: 40px;
+		width: 42px;
+		height: 42px;
 		border-radius: var(--radius-comfortable);
-		background: var(--surface-500);
+		background: linear-gradient(140deg, var(--surface-100), var(--surface-500));
+		box-shadow:
+			rgba(38, 37, 30, 0.1) 0 0 0 1px inset,
+			var(--shadow-ambient);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		color: var(--color-text);
+		transition: color 180ms ease;
+	}
+	.card:hover:not(.off) .icon {
+		color: var(--color-accent);
 	}
 
 	.texts {
@@ -80,6 +87,10 @@ interface Props {
 		font-size: 17px;
 		letter-spacing: -0.11px;
 		line-height: 1.3;
+		transition: color 160ms ease;
+	}
+	.card:hover:not(.off) .title {
+		color: var(--color-error);
 	}
 	.desc {
 		font-family: var(--font-serif);

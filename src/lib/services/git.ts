@@ -33,6 +33,15 @@ export interface AppConfig {
 	autoPush: boolean;
 	recentRepos: string[];
 	commitPrefixes: string[];
+	updateProxy: string | null;
+	autoCheckUpdate: boolean;
+}
+
+export interface UpdateInfo {
+	current: string;
+	latestTag: string | null;
+	releaseUrl: string;
+	available: boolean;
 }
 
 export const git = {
@@ -66,7 +75,9 @@ export const git = {
 			password
 		}),
 	getConfig: () => invoke<AppConfig>('get_config'),
-	saveConfig: (config: AppConfig) => invoke<void>('save_config', { config })
+	saveConfig: (config: AppConfig) => invoke<void>('save_config', { config }),
+	checkUpdates: (proxy: string | null) => invoke<UpdateInfo>('check_updates', { proxy }),
+	openExternal: (url: string) => invoke<void>('open_external', { url })
 };
 
 export interface LogLine {

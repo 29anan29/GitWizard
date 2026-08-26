@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { fly, fade } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
+	import { getVersion } from '@tauri-apps/api/app';
 	import Button from './Button.svelte';
 	import x from '$lib/assets/icons/x.svg?raw';
 	import Icon from './Icon.svelte';
 	import { config, persistConfig } from '$lib/state/config.svelte';
+	import { git, type UpdateInfo } from '$lib/services/git';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 
 	interface Props {
@@ -13,23 +17,58 @@
 	let userName = $state(config.userName ?? '');
 	let userEmail = $state(config.userEmail ?? '');
 	let autoPush = $state(config.autoPush);
+	let updateProxy = $state(config.updateProxy ?? '');
+	let autoCheck = $state(config.autoCheckUpdate);
+
+	let appVersion = $state('');
+	getVersion().then((v) => (appVersion = v)).catch(() => {});
+
+	let checking = $state(false);
+	let checkResult = $state<UpdateInfo | null>(null);
+	let checkError = $state('');
+
+	async function save(): Promise<void> {
+		config.userName = userName.trim() || null;
+		config.userEmail = userEmail.trim() || null;
+		config.autoPush = autoPush;
+		config.updateProxy = updateProxy.trim() || null;
+		config.autoCheckUpdate = autoCheck;
+		await persistConfig();
+		onclose();
+	}
 
 	function setLocale(l: 'zh-CN' | 'en'): void {
 		i18n.locale = l;
 		config.locale = l;
 	}
 
-	async function save(): Promise<void> {
-		config.userName = userName.trim() || null;
-		config.userEmail = userEmail.trim() || null;
-		config.autoPush = autoPush;
-		await persistConfig();
-		onclose();
+	async function checkUpdate(): Promise<void> {
+		checking = true;
+		checkResult = null;
+		checkError = '';
+		try {
+			checkResult = await git.checkUpdates(updateProxy.trim() || null);
+		} catch (e) {
+			checkError = typeof e === 'string' ? e : String(e);
+		} finally {
+			checking = false;
+		}
 	}
 </script>
 
-<div class="overlay" role="presentation" onclick={(e) => e.target === e.currentTarget && onclose()}>
-	<div class="card" role="dialog" aria-modal="true" aria-label={t('settings.title')}>
+<div
+	class="overlay"
+	role="presentation"
+	transition:fade={{ duration: 150 }}
+	onclick={(e) => e.target === e.currentTarget && onclose()}
+>
+	<div
+		class="card"
+		role="dialog"
+		aria-modal="true"
+		aria-label={t('settings.title')}
+		transition:fly={{ y: 18, duration: 220, easing: cubicOut }}
+	>
 		<header>
 			<h2>{t('settings.title')}</h2>
 			<button class="close" onclick={onclose} aria-label={t('common.close')}>
@@ -62,6 +101,54 @@
 			{t('settings.autoPush')}
 		</label>
 
+		<div class="divider"></div>
+
+		<div class="updatesec">
+			<span class="label">{t('settings.update.title')}</span>
+			<div class="verrow">
+				<span class="vermono">v{appVersion || '…'}</span>
+				{#if checking}
+					<span class="verstate">{t('settings.update.checking')}</span>
+				{:else if checkResult}
+					{#if checkResult.available}
+						<span class="verstate new">
+							{t('settings.update.new')} v{checkResult.latestTag ?? ''}
+						</span>
+						<Button variant="pill" onclick={() => void git.openExternal(checkResult!.releaseUrl)}>
+							{t('settings.update.openRelease')}
+						</Button>
+					{:else}
+						<span class="verstate ok">{t('settings.update.uptodate')}</span>
+					{/if}
+				{/if}
+			</div>
+
+			<label class="checkrow small">
+				<input type="checkbox" bind:checked={autoCheck} />
+				<span class="box" aria-hidden="true"></span>
+				{t('settings.update.auto')}
+			</label>
+
+			<div class="field">
+				<label for="proxy">{t('settings.update.proxyLabel')}</label>
+				<input
+					id="proxy"
+					type="text"
+					bind:value={updateProxy}
+					placeholder="http://127.0.0.1:7890"
+					spellcheck="false"
+				/>
+			</div>
+
+			{#if checkError}
+				<p class="checkfail">{t('settings.update.fail')}: {checkError}</p>
+			{/if}
+
+			<Button variant="ghost" onclick={checkUpdate} disabled={checking}>
+				{t('settings.update.check')}
+			</Button>
+		</div>
+
 		<footer>
 			<Button variant="ghost" onclick={onclose}>{t('common.cancel')}</Button>
 			<Button variant="accent" onclick={save}>{t('common.save')}</Button>
@@ -75,6 +162,8 @@
 		inset: 0;
 		z-index: 60;
 		background: rgba(38, 37, 30, 0.32);
+		backdrop-filter: blur(5px);
+		-webkit-backdrop-filter: blur(5px);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -83,7 +172,7 @@
 		width: 420px;
 		max-width: calc(100vw - 48px);
 		background: var(--surface-100);
-		border-radius: 12px;
+		border-radius: 14px;
 		box-shadow: var(--shadow-card);
 		padding: 22px 24px 20px;
 		display: flex;
@@ -214,5 +303,54 @@
 		justify-content: flex-end;
 		gap: 8px;
 		margin-top: 2px;
+	}
+
+	.divider {
+		height: 1px;
+		background: var(--border-subtle);
+		margin: 2px 0;
+	}
+
+	.updatesec {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		align-items: flex-start;
+	}
+	.verrow {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+	.vermono {
+		font-family: var(--font-mono);
+		font-size: 12px;
+		background: var(--surface-300);
+		padding: 4px 11px;
+		border-radius: var(--radius-pill);
+		color: var(--color-text);
+	}
+	.verstate {
+		font-size: 12.5px;
+		color: var(--text-secondary);
+	}
+	.verstate.new {
+		color: var(--color-accent);
+		font-weight: 600;
+	}
+	.verstate.ok {
+		color: var(--color-success);
+	}
+	.checkrow.small {
+		font-size: 13px;
+	}
+	.checkfail {
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: 11.5px;
+		line-height: 1.6;
+		color: var(--color-error);
+		word-break: break-all;
 	}
 </style>

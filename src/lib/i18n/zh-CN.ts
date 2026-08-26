@@ -73,12 +73,45 @@ export const zhCN = {
 	'run.successTitle': '提交完成',
 	'run.pushed': '已推送到远端',
 	'run.notPushed': '仅本地提交，未推送',
-	'run.partialTitle': '已提交但推送失败',
+	'run.partialTitle': '已创建本地提交，但尚未推送到远端',
 	'run.failedTitle': '执行失败',
 	'run.backHome': '返回首页',
 	'run.newCommit': '再提交一次',
 	'run.nonffHint':
 		'远端有新提交，推送被拒绝。需要先拉取并合并远端变更。拉取工作流即将上线，当前可暂用终端执行：git pull --rebase',
+	'files.empty.push': '推送本地提交',
+	'home.ahead.title': '本地有 {n} 个提交等待推送',
+	'home.ahead.desc': '上次提交成功，但推送没有完成。进入提交向导即可一键重试推送。',
+	'home.ahead.action': '去推送',
+	'err.nonff':
+		'问题：远端分支上有你本地还没有的新提交，直接推送会被拒绝。\n怎么改：先拉取并合并远端变更（终端执行 git pull --rebase），解决可能的冲突后再次推送。',
+	'err.auth':
+		'问题：认证失败，用户名或访问令牌不正确。\n怎么改：在「设置」中确认账号信息；GitHub 用户需使用个人访问令牌（PAT）作为密码，可在 GitHub → Settings → Developer settings → Tokens 生成，并勾选 repo 权限。',
+	'err.forbidden':
+		'问题：权限不足，当前账号没有向该仓库推送的权限。\n怎么改：确认远端地址指向你自己的仓库；若是团队仓库，请联系管理员为你添加 Write 权限。',
+	'err.repoNotFound':
+		'问题：找不到远端仓库，地址可能拼写错误或该账号无权访问。\n怎么改：核对 origin 的 URL（终端执行 git remote -v 查看），修正后重试。',
+	'err.noRemote':
+		'问题：这个仓库还没有配置名为 origin 的远端。\n怎么改：终端执行 git remote add origin <仓库地址> 完成配置（图形化远端管理即将上线）。',
+	'err.network':
+		'问题：无法连接到远端服务器，可能是网络不可用、被防火墙拦截或 DNS 解析失败。\n怎么改：检查本机网络与 VPN；公司内网环境请确认是否需要配置代理后重试。',
+	'err.ssl':
+		'问题：安全连接（SSL/TLS）校验失败。\n怎么改：检查系统时间是否正确、证书是否过期；若在受监控网络中，可能是证书被替换，请更换可信网络重试。',
+	'err.proxy':
+		'问题：代理配置无效。\n怎么改：代理地址需以 http:// 或 https:// 开头且包含端口，例如 http://127.0.0.1:7890。',
+	'err.generic':
+		'问题：操作未能完成。\n怎么改：查看下方技术详情定位原因；常见情况为凭据失效或网络波动，修正后点击「重试」。',
+	'err.detail': '技术详情',
+	'settings.update.title': '软件更新',
+	'settings.update.auto': '启动时自动检查更新',
+	'settings.update.proxyLabel': '更新检测代理（可选）',
+	'settings.update.check': '检查更新',
+	'settings.update.checking': '正在检查…',
+	'settings.update.uptodate': '已是最新版本',
+	'settings.update.new': '发现新版本',
+	'settings.update.openRelease': '打开发布页',
+	'settings.update.fail': '检查失败',
+	'header.newVersion': '新版本 {v}',
 	'suggest.docs': 'docs: 更新 {n} 个文档文件',
 	'suggest.test': 'test: 更新测试相关文件（{list}）',
 	'suggest.feat': 'feat: 变更 {n} 个源文件（{list}）',

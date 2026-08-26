@@ -11,6 +11,8 @@ pub struct AppConfig {
     pub auto_push: bool,
     pub recent_repos: Vec<String>,
     pub commit_prefixes: Vec<String>,
+    pub update_proxy: Option<String>,
+    pub auto_check_update: bool,
 }
 
 impl Default for AppConfig {
@@ -25,6 +27,8 @@ impl Default for AppConfig {
                 .iter()
                 .map(|s| s.to_string())
                 .collect(),
+            update_proxy: None,
+            auto_check_update: true,
         }
     }
 }

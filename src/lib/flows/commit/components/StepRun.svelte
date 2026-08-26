@@ -6,6 +6,7 @@
 	import alertTriangle from '$lib/assets/icons/alert-triangle.svg?raw';
 	import { consoleStore } from '$lib/state/console.svelte';
 	import { t } from '$lib/i18n/index.svelte';
+	import { friendlyErrorKey } from '../errors';
 	import type { Wizard } from '../state.svelte';
 
 	let { wizard, onhome, onnew }: { wizard: Wizard; onhome: () => void; onnew: () => void } =
@@ -14,6 +15,7 @@
 	const s = $derived(wizard.state);
 	const pushing = $derived(s.phase === 'running' && s.oid !== '');
 	const percent = $derived(consoleStore.pushPercent);
+	const friendly = $derived(s.errorKind === 'none' ? null : t(friendlyErrorKey(s.errorMsg)));
 </script>
 
 <div class="wrap">
@@ -30,7 +32,7 @@
 		</div>
 	{:else if s.phase === 'success'}
 		<div class="panel ok">
-			<Icon svg={circleCheck} size={44} />
+			<span class="halo"><Icon svg={circleCheck} size={44} /></span>
 			<h2>{t('run.successTitle')}</h2>
 			{#if s.oid}
 				<span class="oid">[{s.oid.slice(0, 7)}]</span>
@@ -45,12 +47,18 @@
 		</div>
 	{:else if s.phase === 'error'}
 		<div class="panel bad">
-			<Icon svg={alertTriangle} size={44} />
+			<span class="halo"><Icon svg={alertTriangle} size={44} /></span>
 			<h2>{s.oid ? t('run.partialTitle') : t('run.failedTitle')}</h2>
 			{#if s.oid}
 				<span class="oid">[{s.oid.slice(0, 7)}]</span>
 			{/if}
-			<pre class="errbox">{s.errorMsg}</pre>
+			{#if friendly}
+				<p class="friendly">{friendly}</p>
+			{/if}
+			<details class="rawwrap">
+				<summary>{t('err.detail')}</summary>
+				<pre class="errbox">{s.errorMsg}</pre>
+			</details>
 			{#if s.errorKind === 'nonff'}
 				<p class="hint">{t('run.nonffHint')}</p>
 			{/if}
@@ -79,7 +87,7 @@
 	}
 	.running :global(.icon) {
 		animation: spin 0.9s linear infinite;
-		color: var(--color-text);
+		color: var(--color-accent);
 	}
 	@keyframes spin {
 		to {
@@ -115,13 +123,35 @@
 		gap: 12px;
 		text-align: center;
 		max-width: 520px;
-		padding: 24px;
+		padding: 32px 36px;
+		background: var(--surface-100);
+		box-shadow:
+			rgba(38, 37, 30, 0.1) 0 0 0 1px inset,
+			var(--shadow-card);
+		border-radius: 14px;
 	}
-	.panel.ok :global(.icon) {
+	.halo {
+		width: 74px;
+		height: 74px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.panel.ok .halo {
+		background: rgba(31, 138, 101, 0.1);
+		animation: ring-pulse 1.8s ease-out 0.15s both;
+	}
+	.panel.ok .halo :global(.icon) {
 		color: var(--color-success);
+		animation: pop-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 	}
-	.panel.bad :global(.icon) {
+	.panel.bad .halo {
+		background: rgba(207, 45, 86, 0.09);
+	}
+	.panel.bad .halo :global(.icon) {
 		color: var(--color-error);
+		animation: pop-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 	}
 	h2 {
 		margin: 4px 0 0;
@@ -147,6 +177,35 @@
 	.chip.ok {
 		color: var(--color-success);
 		background: rgba(31, 138, 101, 0.12);
+	}
+
+	.friendly {
+		margin: 2px 0 0;
+		font-family: var(--font-serif);
+		font-size: 15px;
+		line-height: 1.65;
+		color: var(--color-text);
+		max-width: 460px;
+		text-align: left;
+		background: var(--surface-300);
+		border-radius: var(--radius-comfortable);
+		padding: 12px 16px;
+	}
+
+	.rawwrap {
+		width: 100%;
+		max-width: 460px;
+		text-align: left;
+	}
+	.rawwrap summary {
+		font-size: 11.5px;
+		color: var(--text-tertiary);
+		cursor: pointer;
+		user-select: none;
+		padding: 2px 0 6px;
+	}
+	.rawwrap summary:hover {
+		color: var(--color-error);
 	}
 
 	.errbox {

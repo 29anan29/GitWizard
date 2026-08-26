@@ -9,6 +9,8 @@
 	import { config } from '$lib/state/config.svelte';
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { persistConfig } from '$lib/state/config.svelte';
+	import { updateStore } from '$lib/state/update.svelte';
+	import { git } from '$lib/services/git';
 	import SettingsModal from './SettingsModal.svelte';
 
 	let picker = $state(false);
@@ -91,6 +93,15 @@
 	</div>
 
 	<div class="right">
+		{#if updateStore.info?.available}
+			<button
+				class="update"
+				title={t('settings.update.openRelease')}
+				onclick={() => void git.openExternal(updateStore.info!.releaseUrl)}
+			>
+				{t('header.newVersion', { v: updateStore.info.latestTag ?? '' })}
+			</button>
+		{/if}
 		<button class="lang" onclick={switchLocale}>{t('lang.switch')}</button>
 		<button class="iconbtn" onclick={() => (showSettings = true)} aria-label={t('settings.title')}>
 			<Icon svg={settings} size={15} />
@@ -238,6 +249,24 @@
 	}
 	.lang:hover {
 		color: var(--color-error);
+	}
+
+	.update {
+		background: rgba(245, 78, 0, 0.1);
+		color: var(--color-accent);
+		border: none;
+		border-radius: var(--radius-pill);
+		padding: 6px 13px;
+		font-size: 12px;
+		cursor: pointer;
+		box-shadow: rgba(245, 78, 0, 0.3) 0 0 0 1px inset;
+		transition:
+			color 150ms ease,
+			transform 150ms ease;
+	}
+	.update:hover {
+		transform: translateY(-1px);
+		filter: brightness(1.05);
 	}
 
 	.iconbtn {

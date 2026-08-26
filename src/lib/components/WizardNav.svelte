@@ -59,7 +59,9 @@
 		align-items: center;
 		gap: 16px;
 		padding: 12px 24px;
-		background: var(--surface-200);
+		background: rgba(242, 241, 237, 0.82);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
 		border-bottom: 1px solid var(--border-subtle);
 	}
 
@@ -116,17 +118,21 @@
 		height: 4px;
 		border-radius: var(--radius-pill);
 		background: var(--border-subtle);
-		transition: background-color 200ms ease;
+		transition:
+			background-color 260ms ease,
+			transform 260ms ease;
 	}
 	.seg.done {
 		background: var(--border-medium);
 	}
 	.seg.active {
 		background: var(--color-text);
+		transform: scaleY(1.4);
 	}
 
 	.steplabel {
-		font-size: 11px;
+		font-family: var(--font-mono);
+		font-size: 10.5px;
 		color: var(--text-secondary);
 	}
 </style>

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { fly } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 	import WizardNav from '$lib/components/WizardNav.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import StepFiles from '$lib/flows/commit/components/StepFiles.svelte';
@@ -78,14 +80,24 @@
 				<Button variant="ghost" onclick={() => goto('/')}>{t('run.backHome')}</Button>
 			</div>
 		</section>
-	{:else if wizard.state.step === 1}
-		<section class="body"><StepFiles {wizard} /></section>
-	{:else if wizard.state.step === 2}
-		<section class="body narrow"><StepMessage {wizard} /></section>
-	{:else if wizard.state.step === 3}
-		<section class="body"><StepStrategy {wizard} onexecute={execute} /></section>
 	{:else}
-		<section class="body"><StepRun {wizard} onhome={goHome} onnew={newCommit} /></section>
+		{#key wizard.state.step}
+			<section
+				class="body"
+				class:narrow={wizard.state.step === 2}
+				in:fly={{ y: 16, duration: 280, delay: 60, easing: cubicOut }}
+			>
+				{#if wizard.state.step === 1}
+					<StepFiles {wizard} />
+				{:else if wizard.state.step === 2}
+					<StepMessage {wizard} />
+				{:else if wizard.state.step === 3}
+					<StepStrategy {wizard} onexecute={execute} />
+				{:else}
+					<StepRun {wizard} onhome={goHome} onnew={newCommit} />
+				{/if}
+			</section>
+		{/key}
 	{/if}
 </div>
 

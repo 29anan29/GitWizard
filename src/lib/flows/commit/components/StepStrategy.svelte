@@ -41,11 +41,24 @@
 		</div>
 	</div>
 
-	<label class="checkrow">
-		<input type="checkbox" bind:checked={wizard.state.autoPush} />
-		<span class="box" aria-hidden="true"></span>
-		{t('strategy.autoPush')}
-	</label>
+	<div class="autorow">
+		<div class="autotext">
+			<span class="autolabel">{t('strategy.autoPush')}</span>
+			{#if wizard.state.autoPush}
+				<span class="autosub">git push origin {repoStore.info?.branch ?? ''}</span>
+			{/if}
+		</div>
+		<button
+			class="switch"
+			class:on={wizard.state.autoPush}
+			onclick={() => (wizard.state.autoPush = !wizard.state.autoPush)}
+			role="switch"
+			aria-checked={wizard.state.autoPush}
+			aria-label={t('strategy.autoPush')}
+		>
+			<span class="knob"></span>
+		</button>
+	</div>
 
 	<div class="preview">
 		<span class="micro">{t('strategy.preview')}</span>
@@ -67,7 +80,10 @@
 			</svg>
 		</button>
 		{#if showCmd}
-			<pre>{cmds.join('\n')}</pre>
+			<div class="term">
+				<div class="termhead"><i></i><i></i><i></i><span>sh</span></div>
+				<pre>{cmds.join('\n')}</pre>
+			</div>
 		{/if}
 	</div>
 
@@ -119,45 +135,65 @@
 		color: var(--text-secondary);
 	}
 
-	.checkrow {
+	.autorow {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 14px 18px;
+		background: var(--surface-300);
+		box-shadow: rgba(38, 37, 30, 0.08) 0 0 0 1px inset;
+		border-radius: var(--radius-comfortable);
+	}
+	.autotext {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+	}
+	.autolabel {
 		font-size: 14.5px;
-		cursor: pointer;
-		user-select: none;
-		align-self: flex-start;
 	}
-	.checkrow input {
-		position: absolute;
-		opacity: 0;
-		width: 0;
-		height: 0;
+	.autosub {
+		font-family: var(--font-mono);
+		font-size: 11px;
+		color: var(--color-accent);
 	}
-	.box {
-		width: 17px;
-		height: 17px;
-		border-radius: var(--radius-medium);
-		border: 1px solid var(--border-strong);
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
+
+	.switch {
+		position: relative;
+		width: 42px;
+		height: 24px;
 		flex-shrink: 0;
+		border-radius: var(--radius-pill);
+		background: var(--surface-500);
+		box-shadow: rgba(38, 37, 30, 0.15) 0 0 0 1px inset;
+		border: none;
+		cursor: pointer;
 		transition:
-			background-color 120ms ease,
-			border-color 120ms ease;
+			background-color 200ms ease,
+			box-shadow 200ms ease;
 	}
-	.checkrow input:checked + .box {
+	.switch.on {
 		background: var(--color-accent);
-		border-color: var(--color-accent);
+		box-shadow: 0 2px 10px rgba(245, 78, 0, 0.35);
 	}
-	.checkrow input:checked + .box::after {
-		content: '';
-		width: 5px;
-		height: 9px;
-		border-right: 2px solid #fff;
-		border-bottom: 2px solid #fff;
-		transform: rotate(45deg) translate(-1px, -1px);
+	.knob {
+		position: absolute;
+		top: 3px;
+		left: 3px;
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		background: #ffffff;
+		box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.28);
+		transition: left 200ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	.switch.on .knob {
+		left: 21px;
+	}
+	.switch:focus-visible {
+		outline: none;
+		box-shadow: var(--shadow-focus);
 	}
 
 	.preview {
@@ -193,12 +229,46 @@
 	.chev.open {
 		transform: rotate(180deg);
 	}
-	pre {
-		margin: 4px 0 0;
-		padding: 12px 14px;
+	.term {
+		margin-top: 4px;
 		background: #191813;
-		color: #cfccc0;
 		border-radius: var(--radius-comfortable);
+		overflow: hidden;
+		box-shadow: var(--shadow-card);
+	}
+	.termhead {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		padding: 9px 12px 7px;
+		border-bottom: 1px solid rgba(242, 241, 237, 0.08);
+	}
+	.termhead i {
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		display: inline-block;
+	}
+	.termhead i:nth-child(1) {
+		background: #e2556f;
+	}
+	.termhead i:nth-child(2) {
+		background: #d9a44a;
+	}
+	.termhead i:nth-child(3) {
+		background: #57a583;
+	}
+	.termhead span {
+		margin-left: 8px;
+		font-family: var(--font-mono);
+		font-size: 10px;
+		color: #8f8c7e;
+	}
+	pre {
+		margin: 0;
+		padding: 13px 16px 15px;
+		background: transparent;
+		color: #cfccc0;
 		font-family: var(--font-mono);
 		font-size: 12px;
 		line-height: 1.67;

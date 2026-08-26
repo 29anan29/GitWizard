@@ -59,7 +59,7 @@
 			<ul>
 				{#each g.items as item (item.path)}
 					<li>
-						<label>
+						<label class:checked={selected.has(item.path)}>
 							<input type="checkbox" checked={selected.has(item.path)} onchange={() => toggle(item.path)} />
 							<span class="checkmark" aria-hidden="true"></span>
 							<span class="path">{item.path}</span>
@@ -134,7 +134,32 @@
 		padding: 9px 14px;
 		cursor: pointer;
 		background: var(--surface-100);
-		transition: background-color 120ms ease;
+		position: relative;
+		transition:
+			background-color 120ms ease,
+			box-shadow 160ms ease;
+	}
+	label::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 6px;
+		bottom: 6px;
+		width: 3px;
+		border-radius: var(--radius-pill);
+		background: var(--color-accent);
+		opacity: 0;
+		transform: scaleY(0.4);
+		transition:
+			opacity 150ms ease,
+			transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	label.checked {
+		background: var(--surface-200);
+	}
+	label.checked::before {
+		opacity: 1;
+		transform: scaleY(1);
 	}
 	li + li label {
 		border-top: 1px solid var(--border-subtle);
@@ -165,6 +190,18 @@
 	input:checked + .checkmark {
 		background: var(--color-text);
 		border-color: var(--color-text);
+		animation: pop 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	@keyframes pop {
+		0% {
+			transform: scale(0.7);
+		}
+		60% {
+			transform: scale(1.12);
+		}
+		100% {
+			transform: scale(1);
+		}
 	}
 	input:checked + .checkmark::after {
 		content: '';

@@ -133,6 +133,30 @@ export function createWizard() {
 		await execute();
 	}
 
+	async function pushOnly(): Promise<void> {
+		const info = repoStore.info;
+		if (!info) return;
+
+		state.oid = '';
+		state.pushed = false;
+		state.errorKind = 'none';
+		state.errorMsg = '';
+		state.phase = 'running';
+		try {
+			if (!info.branch) throw new Error('DETACHED_HEAD');
+			await git.push(info.path, 'origin', info.branch, config.userName, config.userEmail);
+			state.pushed = true;
+			state.phase = 'success';
+			await refresh();
+		} catch (e) {
+			const c = classifyError(errorText(e));
+			state.errorKind = c.kind;
+			state.errorMsg = c.msg;
+			state.phase = 'error';
+			await refresh();
+		}
+	}
+
 	function reset(): void {
 		selected.clear();
 		state.step = 1;
@@ -154,6 +178,7 @@ export function createWizard() {
 		computeSummary,
 		execute,
 		retry,
+		pushOnly,
 		reset,
 		state
 	};
