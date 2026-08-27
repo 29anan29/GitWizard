@@ -104,3 +104,58 @@ jobs:
           if-no-files-found: ignore
           path: |
             src-tauri/target/${{ matrix.build_target }}/release/bundle/**/*
+
+  updater-json:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate latest.json and commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          PUB_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          BASE="https://github.com/29anan29/GitWizard/releases/download/v${VERSION}"
+
+          # Discover actual asset names from the release
+          ASSETS=$(gh release view "v${VERSION}" --json assets --jq '.assets[].name')
+
+          linux_x64=$(echo "$ASSETS" | grep -E '\.AppImage$' | head -1)
+          linux_arm=$(echo "$ASSETS" | grep -E 'aarch64.*\.deb$' | head -1)
+          win_x64=$(echo "$ASSETS" | grep -E '_x64-setup\.exe$' | head -1)
+          win_arm=$(echo "$ASSETS" | grep -E 'aarch64.*\.exe$' | head -1)
+          mac_x64=$(echo "$ASSETS" | grep -E '_x64\.dmg$' | head -1)
+          mac_arm=$(echo "$ASSETS" | grep -E '_aarch64\.dmg$' | head -1)
+
+          jq -n \
+            --arg ver "$VERSION" \
+            --arg date "$PUB_DATE" \
+            --arg lx64 "${linux_x64:+$BASE/$linux_x64}" \
+            --arg larm "${linux_arm:+$BASE/$linux_arm}" \
+            --arg wx64 "${win_x64:+$BASE/$win_x64}" \
+            --arg warm "${win_arm:+$BASE/$win_arm}" \
+            --arg mx64 "${mac_x64:+$BASE/$mac_x64}" \
+            --arg marm "${mac_arm:+$BASE/$mac_arm}" \
+            '{
+              version: $ver,
+              notes: "GitWizard v\($ver)",
+              pub_date: $date,
+              platforms: (
+                {} +
+                (if $lx64 != "" then {"linux-x86_64": {signature: "", url: $lx64}} else {} end) +
+                (if $larm != "" then {"linux-aarch64": {signature: "", url: $larm}} else {} end) +
+                (if $wx64 != "" then {"windows-x86_64": {signature: "", url: $wx64}} else {} end) +
+                (if $warm != "" then {"windows-aarch64": {signature: "", url: $warm}} else {} end) +
+                (if $mx64 != "" then {"darwin-x86_64": {signature: "", url: $mx64}} else {} end) +
+                (if $marm != "" then {"darwin-aarch64": {signature: "", url: $marm}} else {} end)
+              )
+            }' > latest.json
+
+          cat latest.json
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add latest.json
+          git diff --cached --quiet || git commit -m "chore: update latest.json for v${VERSION}" && git push

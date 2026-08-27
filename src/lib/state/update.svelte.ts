@@ -1,19 +1,20 @@
-import { git, type UpdateInfo } from '$lib/services/git';
+import { git } from '$lib/services/git';
+import type { Update as UpdaterUpdate } from '@tauri-apps/plugin-updater';
 
 export const updateStore = $state({
-	info: null as UpdateInfo | null,
+	info: null as UpdaterUpdate | null,
 	checked: false
 });
 
 let started = false;
 
-export function startupUpdateCheck(proxy: string | null, enabled: boolean): void {
+export function startupUpdateCheck(_proxy: string | null, enabled: boolean): void {
 	if (started || !enabled) return;
 	started = true;
 	git
-		.checkUpdates(proxy)
-		.then((info) => {
-			updateStore.info = info;
+		.checkUpdater()
+		.then((upd) => {
+			updateStore.info = upd;
 			updateStore.checked = true;
 		})
 		.catch(() => {

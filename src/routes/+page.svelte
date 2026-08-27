@@ -4,6 +4,7 @@
 	import ActionCard from '$lib/components/ActionCard.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Icon from '$lib/components/Icon.svelte';
+	import UpdateModal from '$lib/components/UpdateModal.svelte';
 	import folderOpen from '$lib/assets/icons/folder-open.svg?raw';
 	import send from '$lib/assets/icons/send.svg?raw';
 	import gitBranch from '$lib/assets/icons/git-branch.svg?raw';
@@ -15,6 +16,8 @@
 	import fileText from '$lib/assets/icons/file-text.svg?raw';
 	import { repoStore, openDialog, initRepo, openPath } from '$lib/state/repo.svelte';
 	import { config } from '$lib/state/config.svelte';
+	import { git } from '$lib/services/git';
+	import type { Update as UpdaterUpdate } from '@tauri-apps/plugin-updater';
 	import { getVersion } from '@tauri-apps/api/app';
 	import { goto } from '$app/navigation';
 	import { t, type Key } from '$lib/i18n/index.svelte';
@@ -24,6 +27,24 @@
 
 	let opening = $state(false);
 	let openError = $state('');
+
+	// --- update check on mount ---
+	let pendingUpdate = $state<UpdaterUpdate | null>(null);
+	let showUpdateModal = $state(false);
+
+	async function autoCheckUpdate(): Promise<void> {
+		if (!config.autoCheckUpdate) return;
+		try {
+			const upd = await git.checkUpdater();
+			if (upd) {
+				pendingUpdate = upd;
+			}
+		} catch {
+			/* silent */
+		}
+	}
+
+	autoCheckUpdate();
 
 	async function browse(): Promise<void> {
 		openError = '';
@@ -183,8 +204,17 @@
 
 	<footer class="foot">
 		<span>{t('version.line', { v: appVersion || '…' })}</span>
+		{#if pendingUpdate}
+			<button class="update-pill" onclick={() => (showUpdateModal = true)}>
+				{t('update.badge')}
+			</button>
+		{/if}
 	</footer>
 </div>
+
+{#if showUpdateModal && pendingUpdate}
+	<UpdateModal update={pendingUpdate} onclose={() => (showUpdateModal = false)} />
+{/if}
 
 <style>
 	.container {
@@ -433,10 +463,27 @@
 	.foot {
 		display: flex;
 		justify-content: center;
+		align-items: center;
+		gap: 10px;
 		padding-top: 8px;
 	}
 	.foot span {
 		font-size: 11px;
 		color: rgba(38, 37, 30, 0.35);
+	}
+	.update-pill {
+		border: none;
+		background: rgba(245, 78, 0, 0.1);
+		color: var(--color-accent);
+		font-size: 10.5px;
+		font-weight: 600;
+		padding: 3px 10px;
+		border-radius: var(--radius-pill);
+		cursor: pointer;
+		box-shadow: rgba(245, 78, 0, 0.25) 0 0 0 1px inset;
+		transition: background 150ms ease;
+	}
+	.update-pill:hover {
+		background: rgba(245, 78, 0, 0.18);
 	}
 </style>

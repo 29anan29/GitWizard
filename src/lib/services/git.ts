@@ -1,5 +1,9 @@
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import {
+	check as updaterCheck,
+	type Update as UpdaterUpdate
+} from '@tauri-apps/plugin-updater';
 
 export interface RepoInfo {
 	path: string;
@@ -124,7 +128,10 @@ export const git = {
 	initRepo: (path: string) => invoke<RepoInfo>('init_repo', { path }),
 	getGitignore: (repoPath: string) => invoke<string>('get_gitignore', { repoPath }),
 	setGitignore: (repoPath: string, content: string) =>
-		invoke<void>('set_gitignore', { repoPath, content })
+		invoke<void>('set_gitignore', { repoPath, content }),
+
+	checkUpdater: () => updaterCheck(),
+	downloadAndInstall: (update: UpdaterUpdate) => update.downloadAndInstall((p) => {})
 };
 
 export interface LogLine {

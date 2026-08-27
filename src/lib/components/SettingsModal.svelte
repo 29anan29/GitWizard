@@ -3,12 +3,14 @@
 	import { cubicOut } from 'svelte/easing';
 	import { getVersion } from '@tauri-apps/api/app';
 	import Button from './Button.svelte';
-	import x from '$lib/assets/icons/x.svg?raw';
 	import Icon from './Icon.svelte';
+	import x from '$lib/assets/icons/x.svg?raw';
+	import UpdateModal from './UpdateModal.svelte';
 	import { config, persistConfig } from '$lib/state/config.svelte';
 	import { credStore } from '$lib/state/creds.svelte';
-	import { git, type UpdateInfo } from '$lib/services/git';
+	import { git } from '$lib/services/git';
 	import { i18n, t } from '$lib/i18n/index.svelte';
+	import type { Update as UpdaterUpdate } from '@tauri-apps/plugin-updater';
 
 	interface Props {
 		onclose: () => void;
@@ -30,8 +32,9 @@
 	getVersion().then((v) => (appVersion = v)).catch(() => {});
 
 	let checking = $state(false);
-	let checkResult = $state<UpdateInfo | null>(null);
+	let checkResult = $state<UpdaterUpdate | null>(null);
 	let checkError = $state('');
+	let showUpdateModal = $state(false);
 
 	async function save(): Promise<void> {
 		config.userName = userName.trim() || null;
@@ -75,7 +78,12 @@
 		checkResult = null;
 		checkError = '';
 		try {
-			checkResult = await git.checkUpdates(updateProxy.trim() || null);
+			const upd = await git.checkUpdater();
+			if (upd) {
+				checkResult = upd;
+			} else {
+				checkResult = null;
+			}
 		} catch (e) {
 			checkError = typeof e === 'string' ? e : String(e);
 		} finally {
@@ -176,16 +184,14 @@
 				{#if checking}
 					<span class="verstate">{t('settings.update.checking')}</span>
 				{:else if checkResult}
-					{#if checkResult.available}
-						<span class="verstate new">
-							{t('settings.update.new')} v{checkResult.latestTag ?? ''}
-						</span>
-						<Button variant="pill" onclick={() => void git.openExternal(checkResult!.releaseUrl)}>
-							{t('settings.update.openRelease')}
-						</Button>
-					{:else}
-						<span class="verstate ok">{t('settings.update.uptodate')}</span>
-					{/if}
+					<span class="verstate new">
+						{t('settings.update.new')} v{checkResult.version ?? ''}
+					</span>
+					<Button variant="pill" onclick={() => (showUpdateModal = true)}>
+						{t('update.download')}
+					</Button>
+				{:else if !checkError}
+					<span class="verstate ok">{t('settings.update.uptodate')}</span>
 				{/if}
 			</div>
 
@@ -221,6 +227,10 @@
 		</footer>
 	</div>
 </div>
+
+{#if showUpdateModal && checkResult}
+	<UpdateModal update={checkResult} onclose={() => (showUpdateModal = false)} />
+{/if}
 
 <style>
 	.overlay {

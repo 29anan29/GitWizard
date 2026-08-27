@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Icon from './Icon.svelte';
 	import Badge from './Badge.svelte';
+	import UpdateModal from './UpdateModal.svelte';
 	import folderOpen from '$lib/assets/icons/folder-open.svg?raw';
 	import refreshIcon from '$lib/assets/icons/refresh.svg?raw';
 	import settings from '$lib/assets/icons/settings.svg?raw';
@@ -10,11 +11,11 @@
 	import { i18n, t } from '$lib/i18n/index.svelte';
 	import { persistConfig } from '$lib/state/config.svelte';
 	import { updateStore } from '$lib/state/update.svelte';
-	import { git } from '$lib/services/git';
 	import SettingsModal from './SettingsModal.svelte';
 
 	let picker = $state(false);
 	let showSettings = $state(false);
+	let showUpdateModal = $state(false);
 
 	function switchLocale(): void {
 		i18n.locale = i18n.locale === 'zh-CN' ? 'en' : 'zh-CN';
@@ -93,13 +94,13 @@
 	</div>
 
 	<div class="right">
-		{#if updateStore.info?.available}
+		{#if updateStore.info}
 			<button
 				class="update"
-				title={t('settings.update.openRelease')}
-				onclick={() => void git.openExternal(updateStore.info!.releaseUrl)}
+				title={t('header.newVersion', { v: updateStore.info.version ?? '' })}
+				onclick={() => (showUpdateModal = true)}
 			>
-				{t('header.newVersion', { v: updateStore.info.latestTag ?? '' })}
+				{t('header.newVersion', { v: updateStore.info.version ?? '' })}
 			</button>
 		{/if}
 		<button class="lang" onclick={switchLocale}>{t('lang.switch')}</button>
@@ -111,6 +112,10 @@
 
 {#if showSettings}
 	<SettingsModal onclose={() => (showSettings = false)} />
+{/if}
+
+{#if showUpdateModal && updateStore.info}
+	<UpdateModal update={updateStore.info} onclose={() => (showUpdateModal = false)} />
 {/if}
 
 <style>

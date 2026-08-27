@@ -199,5 +199,13 @@ export const en: Record<keyof typeof zhCN, string> = {
 	'ignore.title': 'Edit .gitignore',
 	'ignore.placeholder': '# Write your .gitignore rules here\n# One pattern per line, # starts a comment\n',
 	'ignore.saved': 'Saved',
-	'err.repoExists': 'Problem: this directory is already a Git repository.\nFix: open it directly — no need to initialize again.'
+	'err.repoExists': 'Problem: this directory is already a Git repository.\nFix: open it directly — no need to initialize again.',
+	'update.title': 'Update available',
+	'update.desc': 'A new version is ready: {from} → {to}',
+	'update.download': 'Download & install',
+	'update.later': 'Not now',
+	'update.downloading': 'Downloading and installing update…',
+	'update.ready': 'Update downloaded — restart to apply.',
+	'update.restart': 'Restart now',
+	'update.badge': 'Update available'
 };

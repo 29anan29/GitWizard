@@ -190,5 +190,13 @@ export const zhCN = {
 	'ignore.title': '编辑 .gitignore',
 	'ignore.placeholder': '# 在此编写 .gitignore 规则\n# 每行一个模式，# 开头为注释\n',
 	'ignore.saved': '已保存',
-	'err.repoExists': '问题：该目录已经是一个 Git 仓库。\n怎么改：直接打开该仓库即可，无需重复初始化。'
+	'err.repoExists': '问题：该目录已经是一个 Git 仓库。\n怎么改：直接打开该仓库即可，无需重复初始化。',
+	'update.title': '发现新版本',
+	'update.desc': '有新版本可供更新：{from} → {to}',
+	'update.download': '下载并安装',
+	'update.later': '稍后再说',
+	'update.downloading': '正在下载并安装更新…',
+	'update.ready': '更新已下载完成，重启后生效。',
+	'update.restart': '立即重启',
+	'update.badge': '可更新'
 };
