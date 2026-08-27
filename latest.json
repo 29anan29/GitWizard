@@ -1,31 +1,31 @@
 {
-  "version": "0.8.2",
-  "notes": "GitWizard v0.8.2",
-  "pub_date": "2026-08-27T08:30:59Z",
+  "version": "0.9.0",
+  "notes": "GitWizard v0.9.0",
+  "pub_date": "2026-08-27T09:55:09Z",
   "platforms": {
     "linux-x86_64": {
       "signature": "",
-      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.8.2/GitWizard_0.8.2_amd64.AppImage"
+      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.9.0/GitWizard_0.9.0_amd64.AppImage"
     },
     "linux-aarch64": {
       "signature": "",
-      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.8.2/GitWizard_0.8.2_arm64.deb"
+      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.9.0/GitWizard_0.9.0_arm64.deb"
     },
     "windows-x86_64": {
       "signature": "",
-      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.8.2/GitWizard_0.8.2_x64-setup.exe"
+      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.9.0/GitWizard_0.9.0_x64-setup.exe"
     },
     "windows-aarch64": {
       "signature": "",
-      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.8.2/GitWizard_0.8.2_arm64-setup.exe"
+      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.9.0/GitWizard_0.9.0_arm64-setup.exe"
     },
     "darwin-x86_64": {
       "signature": "",
-      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.8.2/GitWizard_0.8.2_universal.dmg"
+      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.9.0/GitWizard_0.9.0_universal.dmg"
     },
     "darwin-aarch64": {
       "signature": "",
-      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.8.2/GitWizard_0.8.2_universal.dmg"
+      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.9.0/GitWizard_0.9.0_universal.dmg"
     }
   }
 }
