@@ -6,7 +6,7 @@
   "plugins": {
     "updater": {
       "endpoints": [
-        "https://github.com/29anan29/GitWizard/releases/latest/download/latest.json"
+        "https://raw.githubusercontent.com/29anan29/GitWizard/main/latest.json"
       ],
       "pubkey": "",
       "windows": {
