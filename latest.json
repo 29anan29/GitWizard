@@ -1,6 +1,15 @@
 {
-  "version": "0.8.0",
-  "notes": "GitWizard v0.8.0",
-  "pub_date": "2026-08-27T00:00:00Z",
-  "platforms": {}
+  "version": "0.8.1",
+  "notes": "GitWizard v0.8.1",
+  "pub_date": "2026-08-27T08:11:06Z",
+  "platforms": {
+    "linux-x86_64": {
+      "signature": "",
+      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.8.1/GitWizard_0.8.1_amd64.AppImage"
+    },
+    "windows-x86_64": {
+      "signature": "",
+      "url": "https://github.com/29anan29/GitWizard/releases/download/v0.8.1/GitWizard_0.8.1_x64-setup.exe"
+    }
+  }
 }
