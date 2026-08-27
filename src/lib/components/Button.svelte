@@ -3,15 +3,22 @@
 
 	interface Props {
 		variant?: 'surface' | 'pill' | 'ghost' | 'accent';
+		size?: 'sm' | 'md';
 		disabled?: boolean;
 		onclick?: () => void;
 		children?: Snippet;
 	}
 
-	let { variant = 'surface', disabled = false, onclick, children }: Props = $props();
+	let {
+		variant = 'surface',
+		size = 'md',
+		disabled = false,
+		onclick,
+		children
+	}: Props = $props();
 </script>
 
-<button class={variant} {disabled} {onclick}>
+<button class="{variant} {size}" {disabled} {onclick}>
 	{@render children?.()}
 </button>
 
@@ -24,6 +31,8 @@
 		justify-content: center;
 		gap: 6px;
 		font-weight: 400;
+		font-size: 14px;
+		line-height: 1;
 		transition:
 			color 150ms ease,
 			background-color 200ms ease,
@@ -42,13 +51,18 @@
 		cursor: not-allowed;
 	}
 
+	.sm {
+		padding: 6px 12px;
+		font-size: 13px;
+	}
+	.md {
+		padding: 10px 16px;
+	}
+
 	.surface {
 		background: var(--surface-300);
 		color: var(--color-text);
-		padding: 10px 12px 10px 14px;
 		border-radius: var(--radius-comfortable);
-		font-size: 14px;
-		line-height: 1;
 	}
 	.surface:hover:not(:disabled) {
 		color: var(--color-error);
@@ -57,10 +71,7 @@
 	.accent {
 		background: linear-gradient(180deg, #ff5d0b, #f04b00);
 		color: #ffffff;
-		padding: 11px 20px;
 		border-radius: var(--radius-comfortable);
-		font-size: 14px;
-		line-height: 1;
 		box-shadow: 0 1px 2px rgba(240, 75, 0, 0.35);
 	}
 	.accent:hover:not(:disabled) {
@@ -72,10 +83,7 @@
 	.pill {
 		background: var(--surface-400);
 		color: var(--text-tertiary);
-		padding: 6px 14px;
 		border-radius: var(--radius-pill);
-		font-size: 14px;
-		line-height: 1.4;
 	}
 	.pill:hover:not(:disabled) {
 		color: var(--color-error);
@@ -84,10 +92,7 @@
 	.ghost {
 		background: rgba(38, 37, 30, 0.06);
 		color: rgba(38, 37, 30, 0.55);
-		padding: 6px 12px;
 		border-radius: var(--radius-comfortable);
-		font-size: 13px;
-		line-height: 1.4;
 	}
 	.ghost:hover:not(:disabled) {
 		color: var(--color-error);

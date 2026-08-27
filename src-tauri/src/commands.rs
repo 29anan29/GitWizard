@@ -1,6 +1,6 @@
 use crate::{
     branch as branch_mod, commit as commit_mod, config as app_config, credentials, events,
-    ignore as ignore_mod, pull, push, repo, stage,
+    ignore as ignore_mod, log as log_mod, merge, pull, push, repo, reset, ssh, stage, undo,
 };
 use std::path::Path;
 use std::sync::Arc;
@@ -441,6 +441,127 @@ pub async fn get_gitignore(repo_path: String) -> Result<String, String> {
 #[tauri::command]
 pub async fn set_gitignore(repo_path: String, content: String) -> Result<(), String> {
     tokio::task::spawn_blocking(move || ignore_mod::set(&repo_path, &content))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn merge_branch(
+    app: AppHandle,
+    repo_path: String,
+    branch_name: String,
+) -> Result<merge::MergeResult, String> {
+    events::cmd(&app, &format!("git merge {branch_name}"));
+    tokio::task::spawn_blocking(move || merge::merge(&repo_path, &branch_name))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn list_mergeable_branches(repo_path: String) -> Result<Vec<String>, String> {
+    tokio::task::spawn_blocking(move || merge::list_mergeable_branches(&repo_path))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn reset_soft(
+    app: AppHandle,
+    repo_path: String,
+    target: String,
+) -> Result<(), String> {
+    events::cmd(&app, &format!("git reset --soft {target}"));
+    tokio::task::spawn_blocking(move || reset::reset_soft(&repo_path, &target))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn reset_mixed(
+    app: AppHandle,
+    repo_path: String,
+    target: String,
+) -> Result<(), String> {
+    events::cmd(&app, &format!("git reset --mixed {target}"));
+    tokio::task::spawn_blocking(move || reset::reset_mixed(&repo_path, &target))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn reset_hard(
+    app: AppHandle,
+    repo_path: String,
+    target: String,
+) -> Result<(), String> {
+    events::cmd(&app, &format!("git reset --hard {target}"));
+    tokio::task::spawn_blocking(move || reset::reset_hard(&repo_path, &target))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn revert_commit(
+    app: AppHandle,
+    repo_path: String,
+    commit_oid: String,
+) -> Result<(), String> {
+    events::cmd(&app, &format!("git revert {commit_oid}"));
+    tokio::task::spawn_blocking(move || reset::revert_commit(&repo_path, &commit_oid))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn get_log(
+    repo_path: String,
+    max_count: usize,
+) -> Result<Vec<log_mod::LogEntry>, String> {
+    tokio::task::spawn_blocking(move || log_mod::log(&repo_path, max_count))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn list_ssh_keys() -> Result<Vec<ssh::SshKey>, String> {
+    tokio::task::spawn_blocking(|| ssh::list_keys())
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn generate_ssh_key(
+    name: String,
+    key_type: String,
+    comment: String,
+) -> Result<String, String> {
+    tokio::task::spawn_blocking(move || ssh::generate_key(&name, &key_type, &comment))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn get_undo_point(repo_path: String) -> Result<undo::UndoPoint, String> {
+    tokio::task::spawn_blocking(move || undo::head_info(&repo_path))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn undo_head(
+    app: AppHandle,
+    repo_path: String,
+    keep_changes: bool,
+) -> Result<undo::UndoPoint, String> {
+    events::cmd(
+        &app,
+        &if keep_changes {
+            "git reset --soft HEAD~1".to_string()
+        } else {
+            "git reset --mixed HEAD~1".to_string()
+        },
+    );
+    tokio::task::spawn_blocking(move || undo::undo_last_commit(&repo_path, keep_changes))
         .await
         .map_err(|e| e.to_string())?
 }

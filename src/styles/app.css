@@ -39,6 +39,31 @@
 		'Courier New', monospace;
 }
 
+[data-theme='dark'] {
+	--color-bg: #1a1a1a;
+	--color-text: #e8e6e3;
+	--surface-100: #222222;
+	--surface-200: #282828;
+	--surface-300: #2e2e2e;
+	--surface-400: #333333;
+	--surface-500: #3a3a3a;
+	--color-accent: #ff6b2b;
+	--color-gold: #d49a44;
+	--color-error: #e84466;
+	--color-success: #34c78a;
+	--text-secondary: rgba(232, 230, 227, 0.6);
+	--text-tertiary: rgba(232, 230, 227, 0.5);
+	--border-subtle: rgba(232, 230, 227, 0.1);
+	--border-medium: rgba(232, 230, 227, 0.18);
+	--border-strong: rgba(232, 230, 227, 0.5);
+	--shadow-card:
+		rgba(0, 0, 0, 0.35) 0px 28px 70px,
+		rgba(0, 0, 0, 0.25) 0px 14px 32px,
+		rgba(232, 230, 227, 0.06) 0px 0px 0px 1px;
+	--shadow-ambient: rgba(0, 0, 0, 0.08) 0px 0px 16px;
+	--shadow-focus: rgba(0, 0, 0, 0.25) 0px 4px 12px;
+}
+
 * {
 	box-sizing: border-box;
 }

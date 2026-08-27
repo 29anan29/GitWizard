@@ -14,6 +14,7 @@ pub struct AppConfig {
     pub update_proxy: Option<String>,
     pub auto_check_update: bool,
     pub credential_username: Option<String>,
+    pub theme: String,
 }
 
 impl Default for AppConfig {
@@ -31,6 +32,7 @@ impl Default for AppConfig {
             update_proxy: None,
             auto_check_update: true,
             credential_username: None,
+            theme: "system".into(),
         }
     }
 }

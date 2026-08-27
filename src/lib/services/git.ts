@@ -40,6 +40,7 @@ export interface AppConfig {
 	updateProxy: string | null;
 	autoCheckUpdate: boolean;
 	credentialUsername: string | null;
+	theme: 'system' | 'light' | 'dark';
 }
 
 export interface BranchList {
@@ -131,7 +132,30 @@ export const git = {
 		invoke<void>('set_gitignore', { repoPath, content }),
 
 	checkUpdater: () => updaterCheck(),
-	downloadAndInstall: (update: UpdaterUpdate) => update.downloadAndInstall((p) => {})
+	downloadAndInstall: (update: UpdaterUpdate) => update.downloadAndInstall((p) => {}),
+
+	merge: (repoPath: string, branch: string) =>
+		invoke<{ status: 'fast_forward' | 'merged' | 'conflict' | 'up_to_date'; conflicts: string[] }>(
+			'merge_branch',
+			{ repoPath, branch }
+		),
+	reset: (repoPath: string, mode: 'soft' | 'mixed' | 'hard', target: string) =>
+		invoke<void>('git_reset', { repoPath, mode, target }),
+	revert: (repoPath: string, commitHash: string) =>
+		invoke<void>('git_revert', { repoPath, commitHash }),
+	getLog: (repoPath: string, maxCount: number) =>
+		invoke<{ hash: string; message: string; author: string; time: string; parents: string[] }[]>(
+			'get_log',
+			{ repoPath, maxCount }
+		),
+	readFile: (repoPath: string, filePath: string) =>
+		invoke<string>('read_repo_file', { repoPath, filePath }),
+	writeFile: (repoPath: string, filePath: string, content: string) =>
+		invoke<void>('write_repo_file', { repoPath, filePath, content }),
+	listSshKeys: () =>
+		invoke<{ name: string; type: string; path: string; isDefault: boolean }[]>('list_ssh_keys'),
+	generateSshKey: (name: string, keyType: string, comment?: string) =>
+		invoke<string>('generate_ssh_key', { name, keyType, comment })
 };
 
 export interface LogLine {

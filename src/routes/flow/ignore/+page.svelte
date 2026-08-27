@@ -60,7 +60,7 @@
 			<h2>{t('guard.noRepo.title')}</h2>
 			<p>{t('guard.noRepo.desc')}</p>
 			<div class="actions">
-				<Button variant="accent" onclick={() => goto('/')}>{t('run.backHome')}</Button>
+				<Button variant="ghost" onclick={() => goto('/')}>{t('run.backHome')}</Button>
 			</div>
 		</section>
 	{:else}

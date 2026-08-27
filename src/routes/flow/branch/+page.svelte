@@ -222,7 +222,7 @@
 			</ul>
 
 			<footer class="foot">
-				<Button variant="surface" onclick={() => goto('/')}>{t('run.backHome')}</Button>
+				<Button variant="ghost" onclick={() => goto('/')}>{t('run.backHome')}</Button>
 			</footer>
 		</section>
 	{/if}

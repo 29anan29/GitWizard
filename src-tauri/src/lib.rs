@@ -5,10 +5,15 @@ pub mod config;
 pub mod credentials;
 pub mod events;
 pub mod ignore;
+pub mod log;
+pub mod merge;
 pub mod pull;
 pub mod push;
 pub mod repo;
+pub mod reset;
+pub mod ssh;
 pub mod stage;
+pub mod undo;
 
 pub fn run() {
     tauri::Builder::default()
@@ -38,7 +43,18 @@ pub fn run() {
             commands::rename_branch,
             commands::init_repo,
             commands::get_gitignore,
-            commands::set_gitignore
+            commands::set_gitignore,
+            commands::merge_branch,
+            commands::list_mergeable_branches,
+            commands::reset_soft,
+            commands::reset_mixed,
+            commands::reset_hard,
+            commands::revert_commit,
+            commands::get_log,
+            commands::list_ssh_keys,
+            commands::generate_ssh_key,
+            commands::undo_head,
+            commands::get_undo_point
         ])
         .run(tauri::generate_context!())
         .expect("failed to run gitwizard");

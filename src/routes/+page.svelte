@@ -14,6 +14,8 @@
 	import bolt from '$lib/assets/icons/bolt.svg?raw';
 	import wand from '$lib/assets/icons/wand.svg?raw';
 	import fileText from '$lib/assets/icons/file-text.svg?raw';
+	import settings from '$lib/assets/icons/settings.svg?raw';
+	import shieldLock from '$lib/assets/icons/shield-lock.svg?raw';
 	import { repoStore, openDialog, initRepo, openPath } from '$lib/state/repo.svelte';
 	import { config } from '$lib/state/config.svelte';
 	import { git } from '$lib/services/git';
@@ -98,9 +100,12 @@
 		},
 		{ icon: gitBranch, titleKey: 'cards.branch.title', descKey: 'cards.branch.desc', enabled: true, badge: () => 0, act: () => goto('/flow/branch') },
 		{ icon: fileText, titleKey: 'cards.ignore.title', descKey: 'cards.ignore.desc', enabled: true, badge: () => 0, act: () => goto('/flow/ignore') },
-		{ icon: gitMerge, titleKey: 'cards.merge.title', descKey: 'cards.merge.desc', enabled: false, badge: () => 0 },
-		{ icon: history, titleKey: 'cards.reset.title', descKey: 'cards.reset.desc', enabled: false, badge: () => 0 },
-		{ icon: bolt, titleKey: 'cards.quick.title', descKey: 'cards.quick.desc', enabled: false, badge: () => 0 }
+		{ icon: gitMerge, titleKey: 'cards.merge.title', descKey: 'cards.merge.desc', enabled: true, badge: () => 0, act: () => goto('/flow/merge') },
+		{ icon: history, titleKey: 'cards.reset.title', descKey: 'cards.reset.desc', enabled: true, badge: () => 0, act: () => goto('/flow/reset') },
+		{ icon: bolt, titleKey: 'cards.quick.title', descKey: 'cards.quick.desc', enabled: false, badge: () => 0 },
+		{ icon: settings, titleKey: 'cards.config.title', descKey: 'cards.config.desc', enabled: true, badge: () => 0, act: () => goto('/flow/config') },
+		{ icon: fileText, titleKey: 'cards.log.title', descKey: 'cards.log.desc', enabled: true, badge: () => 0, act: () => goto('/flow/log') },
+		{ icon: shieldLock, titleKey: 'cards.ssh.title', descKey: 'cards.ssh.desc', enabled: true, badge: () => 0, act: () => goto('/flow/ssh') }
 	];
 
 	const info = $derived(repoStore.info);

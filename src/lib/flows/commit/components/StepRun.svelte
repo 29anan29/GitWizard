@@ -43,7 +43,7 @@
 			</span>
 			<div class="actions">
 				<Button variant="ghost" onclick={onnew}>{t('run.newCommit')}</Button>
-				<Button variant="surface" onclick={onhome}>{t('run.backHome')}</Button>
+				<Button variant="ghost" onclick={onhome}>{t("run.backHome")}')}</Button>
 			</div>
 		</div>
 	{:else if s.phase === 'error'}
@@ -68,7 +68,7 @@
 			{/if}
 			<div class="actions">
 				<Button variant="ghost" onclick={() => void wizard.retry()}>{t('common.retry')}</Button>
-				<Button variant="surface" onclick={onhome}>{t('run.backHome')}</Button>
+				<Button variant="ghost" onclick={onhome}>{t("run.backHome")}')}</Button>
 			</div>
 		</div>
 	{/if}

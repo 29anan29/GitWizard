@@ -209,7 +209,7 @@
 			{/if}
 			<footer class="bar center-bar">
 				<Button variant="ghost" onclick={() => void precheck()}>{t('repo.refresh')}</Button>
-				<Button variant="surface" onclick={() => goto('/')}>{t('run.backHome')}</Button>
+				<Button variant="ghost" onclick={() => goto("/")}>{t("run.backHome")}')}</Button>
 			</footer>
 		</section>
 	{:else if phase === 'error'}
@@ -225,7 +225,7 @@
 			</div>
 			<footer class="bar center-bar">
 				<Button variant="ghost" onclick={() => void run()}>{t('common.retry')}</Button>
-				<Button variant="surface" onclick={() => goto('/')}>{t('run.backHome')}</Button>
+				<Button variant="ghost" onclick={() => goto("/")}>{t("run.backHome")}')}</Button>
 			</footer>
 		</section>
 	{/if}

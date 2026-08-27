@@ -1,4 +1,4 @@
-import { git, type UpdateInfo } from '$lib/services/git';
+import { git } from '$lib/services/git';
 import type { AppConfig } from '$lib/services/git';
 
 const defaults: AppConfig = {
@@ -10,7 +10,8 @@ const defaults: AppConfig = {
 	commitPrefixes: ['feat', 'fix', 'docs', 'chore', 'refactor', 'test'],
 	updateProxy: null,
 	autoCheckUpdate: true,
-	credentialUsername: null
+	credentialUsername: null,
+	theme: 'system'
 };
 
 export const config = $state<AppConfig>({ ...defaults });
