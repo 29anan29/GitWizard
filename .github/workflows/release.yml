@@ -125,11 +125,11 @@ jobs:
           ASSETS=$(gh release view "v${VERSION}" --json assets --jq '.assets[].name')
 
           linux_x64=$(echo "$ASSETS" | grep -E '\.AppImage$' | head -1)
-          linux_arm=$(echo "$ASSETS" | grep -E 'aarch64.*\.deb$' | head -1)
-          win_x64=$(echo "$ASSETS" | grep -E '_x64-setup\.exe$' | head -1)
-          win_arm=$(echo "$ASSETS" | grep -E 'aarch64.*\.exe$' | head -1)
-          mac_x64=$(echo "$ASSETS" | grep -E '_x64\.dmg$' | head -1)
-          mac_arm=$(echo "$ASSETS" | grep -E '_aarch64\.dmg$' | head -1)
+          linux_arm=$(echo "$ASSETS" | grep -E 'arm64.*\.deb$' | head -1)
+          win_x64=$(echo "$ASSETS" | grep -E 'x64-setup\.exe$' | head -1)
+          win_arm=$(echo "$ASSETS" | grep -E 'arm64-setup\.exe$' | head -1)
+          mac_x64=$(echo "$ASSETS" | grep -E '\.dmg$' | head -1)
+          mac_arm=""
 
           jq -n \
             --arg ver "$VERSION" \
@@ -151,7 +151,7 @@ jobs:
                 (if $wx64 != "" then {"windows-x86_64": {signature: "", url: $wx64}} else {} end) +
                 (if $warm != "" then {"windows-aarch64": {signature: "", url: $warm}} else {} end) +
                 (if $mx64 != "" then {"darwin-x86_64": {signature: "", url: $mx64}} else {} end) +
-                (if $marm != "" then {"darwin-aarch64": {signature: "", url: $marm}} else {} end)
+                (if $mx64 != "" then {"darwin-aarch64": {signature: "", url: $mx64}} else {} end)
               )
             }' > latest.json
 
