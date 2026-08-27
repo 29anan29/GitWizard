@@ -12,7 +12,8 @@
 	import history from '$lib/assets/icons/history.svg?raw';
 	import bolt from '$lib/assets/icons/bolt.svg?raw';
 	import wand from '$lib/assets/icons/wand.svg?raw';
-	import { repoStore, openDialog, openPath } from '$lib/state/repo.svelte';
+	import fileText from '$lib/assets/icons/file-text.svg?raw';
+	import { repoStore, openDialog, initRepo, openPath } from '$lib/state/repo.svelte';
 	import { config } from '$lib/state/config.svelte';
 	import { getVersion } from '@tauri-apps/api/app';
 	import { goto } from '$app/navigation';
@@ -75,6 +76,7 @@
 			act: () => goto('/flow/pull')
 		},
 		{ icon: gitBranch, titleKey: 'cards.branch.title', descKey: 'cards.branch.desc', enabled: true, badge: () => 0, act: () => goto('/flow/branch') },
+		{ icon: fileText, titleKey: 'cards.ignore.title', descKey: 'cards.ignore.desc', enabled: true, badge: () => 0, act: () => goto('/flow/ignore') },
 		{ icon: gitMerge, titleKey: 'cards.merge.title', descKey: 'cards.merge.desc', enabled: false, badge: () => 0 },
 		{ icon: history, titleKey: 'cards.reset.title', descKey: 'cards.reset.desc', enabled: false, badge: () => 0 },
 		{ icon: bolt, titleKey: 'cards.quick.title', descKey: 'cards.quick.desc', enabled: false, badge: () => 0 }
@@ -139,7 +141,10 @@
 			{#if opening}
 				<span class="opening">…</span>
 			{:else}
-				<Button variant="accent" onclick={browse}>{t('repo.openAction')}</Button>
+				<div class="initrow">
+					<Button variant="accent" onclick={browse}>{t('repo.openAction')}</Button>
+					<Button variant="ghost" onclick={() => void initRepo()}>{t('repo.initAction')}</Button>
+				</div>
 			{/if}
 
 			{#if openError}
@@ -369,6 +374,11 @@
 	.opening {
 		font-size: 14px;
 		color: var(--text-secondary);
+	}
+	.initrow {
+		display: flex;
+		gap: 10px;
+		align-items: center;
 	}
 	.err {
 		margin: 0;

@@ -1,6 +1,6 @@
 use crate::{
-    branch as branch_mod, commit as commit_mod, config as app_config, credentials, events, pull,
-    push, repo, stage,
+    branch as branch_mod, commit as commit_mod, config as app_config, credentials, events,
+    ignore as ignore_mod, pull, push, repo, stage,
 };
 use std::path::Path;
 use std::sync::Arc;
@@ -418,4 +418,29 @@ fn summarize_paths(files: &[String]) -> String {
         line.push_str(&format!(" (+{} 个文件)", files.len() - MAX));
     }
     line
+}
+
+#[tauri::command]
+pub async fn init_repo(app: AppHandle, path: String) -> Result<repo::RepoInfo, String> {
+    events::cmd(&app, &format!("git init -C {}", shell_quote(&path)));
+    tokio::task::spawn_blocking(move || {
+        let r = repo::init(std::path::Path::new(&path))?;
+        repo::info(&r)
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn get_gitignore(repo_path: String) -> Result<String, String> {
+    tokio::task::spawn_blocking(move || ignore_mod::get(&repo_path))
+        .await
+        .map_err(|e| e.to_string())?
+}
+
+#[tauri::command]
+pub async fn set_gitignore(repo_path: String, content: String) -> Result<(), String> {
+    tokio::task::spawn_blocking(move || ignore_mod::set(&repo_path, &content))
+        .await
+        .map_err(|e| e.to_string())?
 }

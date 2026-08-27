@@ -120,7 +120,11 @@ export const git = {
 	deleteBranch: (repoPath: string, name: string, force: boolean) =>
 		invoke<void>('delete_branch', { repoPath, name, force }),
 	renameBranch: (repoPath: string, oldName: string, newName: string) =>
-		invoke<void>('rename_branch', { repoPath, oldName, newName })
+		invoke<void>('rename_branch', { repoPath, oldName, newName }),
+	initRepo: (path: string) => invoke<RepoInfo>('init_repo', { path }),
+	getGitignore: (repoPath: string) => invoke<string>('get_gitignore', { repoPath }),
+	setGitignore: (repoPath: string, content: string) =>
+		invoke<void>('set_gitignore', { repoPath, content })
 };
 
 export interface LogLine {

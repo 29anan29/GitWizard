@@ -1,6 +1,6 @@
 use git2::Repository;
 use gitwizard_lib::repo::FileKind;
-use gitwizard_lib::{commit as cw, pull as pw, push as ph, repo as rw, stage as sw};
+use gitwizard_lib::{commit as cw, ignore as iw, pull as pw, push as ph, repo as rw, stage as sw};
 use std::fs;
 use std::path::Path;
 use std::sync::Arc;
@@ -281,4 +281,53 @@ fn branch_create_switch_rename_delete_flow() {
     assert!(bw::validate_name("bad name").is_err());
     assert!(bw::validate_name("-lead").is_err());
     assert!(bw::validate_name("ok/feat-1").is_ok());
+}
+
+#[test]
+fn init_new_repo_returns_repo_info() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path().join("brand-new");
+    fs::create_dir_all(&root).unwrap();
+
+    let repo = rw::init(&root).unwrap();
+    // repo exists and .git was created
+    assert!(root.join(".git").exists());
+    // no commits yet, so branch is None
+    let info = rw::info(&repo).unwrap();
+    assert_eq!(info.name, "brand-new");
+    assert!(info.branch.is_none());
+    assert_eq!(info.dirty_count, 0);
+}
+
+#[test]
+fn init_existing_repo_returns_error() {
+    let (_guard, root) = setup();
+    match rw::init(&root) {
+        Ok(_) => panic!("expected REPO_EXISTS error"),
+        Err(msg) => assert!(msg.contains("REPO_EXISTS"), "unexpected: {msg}"),
+    }
+}
+
+#[test]
+fn ignore_get_set_roundtrip() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path().join("ign");
+    fs::create_dir_all(&root).unwrap();
+
+    let empty = iw::get(root.to_str().unwrap()).unwrap();
+    assert_eq!(empty, "");
+
+    iw::set(root.to_str().unwrap(), "*.log\nnode_modules/\n").unwrap();
+    let got = iw::get(root.to_str().unwrap()).unwrap();
+    assert_eq!(got, "*.log\nnode_modules/\n");
+}
+
+#[test]
+fn ignore_set_creates_parent_dirs() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path().join("a").join("b");
+    // root doesn't exist yet
+    iw::set(root.to_str().unwrap(), "*.o\n").unwrap();
+    let got = iw::get(root.to_str().unwrap()).unwrap();
+    assert_eq!(got, "*.o\n");
 }

@@ -24,6 +24,20 @@ export async function openPath(path: string): Promise<void> {
 	}
 }
 
+export async function initRepo(): Promise<void> {
+	const path = await git.openDialog('选择要初始化仓库的目录');
+	if (!path) return;
+	repoStore.loading = true;
+	try {
+		const info = await git.initRepo(path);
+		repoStore.info = info;
+		repoStore.entries = [];
+		addRecent(path);
+	} finally {
+		repoStore.loading = false;
+	}
+}
+
 export async function refresh(): Promise<void> {
 	if (!repoStore.info) return;
 	const path = repoStore.info.path;

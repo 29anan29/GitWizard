@@ -189,5 +189,15 @@ export const en: Record<keyof typeof zhCN, string> = {
 	'auth.confirm': 'Save and continue',
 	'auth.cancel': 'Cancel',
 	'auth.required': 'Please enter the auth username and access token',
-	'version.line': 'GitWizard v{v}'
+	'version.line': 'GitWizard v{v}',
+	'cards.init.title': 'Init new repository',
+	'cards.init.desc': 'Create a fresh Git repo in a chosen folder',
+	'repo.initAction': 'Pick folder and init',
+	'repo.inited': 'Repository initialized',
+	'cards.ignore.title': 'Edit .gitignore',
+	'cards.ignore.desc': 'Manage the ignore rules file for this repo',
+	'ignore.title': 'Edit .gitignore',
+	'ignore.placeholder': '# Write your .gitignore rules here\n# One pattern per line, # starts a comment\n',
+	'ignore.saved': 'Saved',
+	'err.repoExists': 'Problem: this directory is already a Git repository.\nFix: open it directly — no need to initialize again.'
 };

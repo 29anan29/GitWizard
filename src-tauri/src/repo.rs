@@ -40,6 +40,13 @@ pub fn open(path: &Path) -> Result<Repository, String> {
     })
 }
 
+pub fn init(path: &Path) -> Result<Repository, String> {
+    if path.join(".git").exists() {
+        return Err("REPO_EXISTS: 该目录已是一个 Git 仓库".into());
+    }
+    Repository::init(path).map_err(|e| format!("INIT_FAIL: {}", e.message()))
+}
+
 pub fn info(repo: &Repository) -> Result<RepoInfo, String> {
     let workdir = repo.workdir().ok_or("不支持 bare 仓库")?;
     let path = workdir.to_string_lossy().into_owned();

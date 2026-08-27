@@ -180,5 +180,15 @@ export const zhCN = {
 	'auth.confirm': '保存并继续',
 	'auth.cancel': '取消',
 	'auth.required': '请填写认证用户名和访问令牌',
-	'version.line': 'GitWizard v{v}'
+	'version.line': 'GitWizard v{v}',
+	'cards.init.title': '初始化新仓库',
+	'cards.init.desc': '在指定目录创建新的 Git 仓库',
+	'repo.initAction': '选择目录并初始化',
+	'repo.inited': '仓库已初始化',
+	'cards.ignore.title': '编辑 .gitignore',
+	'cards.ignore.desc': '管理仓库的忽略规则文件',
+	'ignore.title': '编辑 .gitignore',
+	'ignore.placeholder': '# 在此编写 .gitignore 规则\n# 每行一个模式，# 开头为注释\n',
+	'ignore.saved': '已保存',
+	'err.repoExists': '问题：该目录已经是一个 Git 仓库。\n怎么改：直接打开该仓库即可，无需重复初始化。'
 };

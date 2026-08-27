@@ -4,6 +4,7 @@ pub mod commit;
 pub mod config;
 pub mod credentials;
 pub mod events;
+pub mod ignore;
 pub mod pull;
 pub mod push;
 pub mod repo;
@@ -32,7 +33,10 @@ pub fn run() {
             commands::create_branch,
             commands::checkout_branch,
             commands::delete_branch,
-            commands::rename_branch
+            commands::rename_branch,
+            commands::init_repo,
+            commands::get_gitignore,
+            commands::set_gitignore
         ])
         .run(tauri::generate_context!())
         .expect("failed to run gitwizard");
