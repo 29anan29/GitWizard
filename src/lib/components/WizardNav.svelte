@@ -59,7 +59,7 @@
 		align-items: center;
 		gap: 16px;
 		padding: 12px 24px;
-		background: rgba(242, 241, 237, 0.82);
+		background: var(--color-titlebar-bg);
 		backdrop-filter: blur(12px);
 		-webkit-backdrop-filter: blur(12px);
 		border-bottom: 1px solid var(--border-subtle);
@@ -78,7 +78,7 @@
 		gap: 6px;
 		background: transparent;
 		border: none;
-		color: rgba(38, 37, 30, 0.55);
+		color: var(--color-titlebar-text);
 		font-size: 13px;
 		padding: 6px 10px;
 		border-radius: var(--radius-comfortable);

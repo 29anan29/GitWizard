@@ -7,7 +7,7 @@
 <style>
 	.badge {
 		background: var(--color-error);
-		color: #ffffff;
+		color: var(--color-bg);
 		font-family: var(--font-mono);
 		font-size: 11px;
 		line-height: 1;

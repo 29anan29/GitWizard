@@ -91,7 +91,7 @@
 		border-radius: 50%;
 		border: none;
 		background: var(--surface-400);
-		box-shadow: rgba(38, 37, 30, 0.15) 0 0 0 1px inset, var(--shadow-card);
+		box-shadow: var(--color-card-border) 0 0 0 1px inset, var(--shadow-card);
 		color: var(--text-tertiary);
 		cursor: pointer;
 		display: flex;
@@ -145,7 +145,7 @@
 
 	.info-card {
 		background: var(--surface-100);
-		box-shadow: rgba(38, 37, 30, 0.1) 0 0 0 1px inset;
+		box-shadow: var(--color-card-border) 0 0 0 1px inset;
 		border-radius: var(--radius-comfortable);
 		padding: 10px 14px;
 		display: flex;

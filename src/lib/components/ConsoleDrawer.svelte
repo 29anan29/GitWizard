@@ -72,14 +72,14 @@
 		align-items: center;
 		gap: 7px;
 		background: var(--surface-500);
-		color: rgba(38, 37, 30, 0.6);
+		color: var(--color-ghost-text);
 		border: none;
 		padding: 8px 15px;
 		border-radius: var(--radius-pill);
 		font-size: 12px;
 		cursor: pointer;
 		box-shadow:
-			rgba(38, 37, 30, 0.1) 0 0 0 1px inset,
+			var(--color-card-border) 0 0 0 1px inset,
 			var(--shadow-card);
 		transition:
 			color 150ms ease,

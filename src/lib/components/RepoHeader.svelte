@@ -275,9 +275,9 @@
 	}
 
 	.iconbtn {
-		background: rgba(38, 37, 30, 0.06);
+		background: var(--color-ghost-bg);
 		border: none;
-		color: rgba(38, 37, 30, 0.55);
+		color: var(--color-icon);
 		width: 30px;
 		height: 30px;
 		border-radius: var(--radius-comfortable);

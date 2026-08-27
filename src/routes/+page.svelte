@@ -102,7 +102,7 @@
 		{ icon: fileText, titleKey: 'cards.ignore.title', descKey: 'cards.ignore.desc', enabled: true, badge: () => 0, act: () => goto('/flow/ignore') },
 		{ icon: gitMerge, titleKey: 'cards.merge.title', descKey: 'cards.merge.desc', enabled: true, badge: () => 0, act: () => goto('/flow/merge') },
 		{ icon: history, titleKey: 'cards.reset.title', descKey: 'cards.reset.desc', enabled: true, badge: () => 0, act: () => goto('/flow/reset') },
-		{ icon: bolt, titleKey: 'cards.quick.title', descKey: 'cards.quick.desc', enabled: false, badge: () => 0 },
+		{ icon: bolt, titleKey: 'cards.quick.title', descKey: 'cards.quick.desc', enabled: true, badge: () => 0, act: () => goto('/flow/recipes') },
 		{ icon: settings, titleKey: 'cards.config.title', descKey: 'cards.config.desc', enabled: true, badge: () => 0, act: () => goto('/flow/config') },
 		{ icon: fileText, titleKey: 'cards.log.title', descKey: 'cards.log.desc', enabled: true, badge: () => 0, act: () => goto('/flow/log') },
 		{ icon: shieldLock, titleKey: 'cards.ssh.title', descKey: 'cards.ssh.desc', enabled: true, badge: () => 0, act: () => goto('/flow/ssh') }

@@ -3,7 +3,6 @@
 
 	interface Props {
 		variant?: 'surface' | 'pill' | 'ghost' | 'accent';
-		size?: 'sm' | 'md';
 		disabled?: boolean;
 		onclick?: () => void;
 		children?: Snippet;
@@ -11,14 +10,13 @@
 
 	let {
 		variant = 'surface',
-		size = 'md',
 		disabled = false,
 		onclick,
 		children
 	}: Props = $props();
 </script>
 
-<button class="{variant} {size}" {disabled} {onclick}>
+<button class={variant} {disabled} {onclick}>
 	{@render children?.()}
 </button>
 
@@ -31,8 +29,9 @@
 		justify-content: center;
 		gap: 6px;
 		font-weight: 400;
-		font-size: 14px;
+		font-size: 13px;
 		line-height: 1;
+		padding: 8px 16px;
 		transition:
 			color 150ms ease,
 			background-color 200ms ease,
@@ -49,14 +48,6 @@
 	button:disabled {
 		opacity: 0.45;
 		cursor: not-allowed;
-	}
-
-	.sm {
-		padding: 6px 12px;
-		font-size: 13px;
-	}
-	.md {
-		padding: 10px 16px;
 	}
 
 	.surface {
@@ -90,8 +81,8 @@
 	}
 
 	.ghost {
-		background: rgba(38, 37, 30, 0.06);
-		color: rgba(38, 37, 30, 0.55);
+		background: var(--color-ghost-bg);
+		color: var(--color-ghost-text);
 		border-radius: var(--radius-comfortable);
 	}
 	.ghost:hover:not(:disabled) {

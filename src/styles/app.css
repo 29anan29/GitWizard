@@ -37,6 +37,20 @@
 		Cambria, 'Times New Roman', Times, serif;
 	--font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
 		'Courier New', monospace;
+	--color-ghost-bg: rgba(38, 37, 30, 0.06);
+	--color-ghost-text: rgba(38, 37, 30, 0.55);
+	--color-ghost-hover: rgba(38, 37, 30, 0.85);
+	--color-titlebar-bg: rgba(242, 241, 237, 0.88);
+	--color-titlebar-text: rgba(38, 37, 30, 0.55);
+	--color-titlebar-hover: rgba(38, 37, 30, 0.09);
+	--color-icon: rgba(38, 37, 30, 0.55);
+	--color-icon-hover: var(--color-error);
+	--color-pill-bg: var(--surface-400);
+	--color-pill-text: var(--text-tertiary);
+	--color-nav-bg: var(--surface-400);
+	--color-wizard-bar: var(--surface-300);
+	--color-overlay: rgba(38, 37, 30, 0.32);
+	--color-card-border: rgba(38, 37, 30, 0.1);
 }
 
 [data-theme='dark'] {
@@ -62,6 +76,20 @@
 		rgba(232, 230, 227, 0.06) 0px 0px 0px 1px;
 	--shadow-ambient: rgba(0, 0, 0, 0.08) 0px 0px 16px;
 	--shadow-focus: rgba(0, 0, 0, 0.25) 0px 4px 12px;
+	--color-ghost-bg: rgba(232, 230, 227, 0.08);
+	--color-ghost-text: rgba(232, 230, 227, 0.6);
+	--color-ghost-hover: rgba(232, 230, 227, 0.85);
+	--color-titlebar-bg: rgba(26, 26, 26, 0.88);
+	--color-titlebar-text: rgba(232, 230, 227, 0.5);
+	--color-titlebar-hover: rgba(232, 230, 227, 0.09);
+	--color-icon: rgba(232, 230, 227, 0.5);
+	--color-icon-hover: var(--color-error);
+	--color-pill-bg: var(--surface-400);
+	--color-pill-text: var(--text-tertiary);
+	--color-nav-bg: var(--surface-400);
+	--color-wizard-bar: var(--surface-300);
+	--color-overlay: rgba(38, 37, 30, 0.55);
+	--color-card-border: rgba(232, 230, 227, 0.1);
 }
 
 * {

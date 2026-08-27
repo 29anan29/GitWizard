@@ -48,7 +48,7 @@
 		z-index: 90;
 		display: flex;
 		align-items: center;
-		background: rgba(242, 241, 237, 0.88);
+		background: var(--color-titlebar-bg);
 		backdrop-filter: blur(10px);
 		-webkit-backdrop-filter: blur(10px);
 		border-bottom: 1px solid var(--border-subtle);
@@ -87,7 +87,7 @@
 		height: 100%;
 		border: none;
 		background: transparent;
-		color: rgba(38, 37, 30, 0.55);
+		color: var(--color-titlebar-text);
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -97,7 +97,7 @@
 			color 140ms ease;
 	}
 	.ctrl:hover {
-		background: rgba(38, 37, 30, 0.09);
+		background: var(--color-titlebar-hover);
 		color: var(--color-text);
 	}
 	.closebtn:hover {

@@ -104,7 +104,7 @@
 		position: fixed;
 		inset: 0;
 		z-index: 70;
-		background: rgba(38, 37, 30, 0.32);
+		background: var(--color-overlay);
 		backdrop-filter: blur(5px);
 		-webkit-backdrop-filter: blur(5px);
 		display: flex;

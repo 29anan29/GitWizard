@@ -36,7 +36,7 @@ interface Props {
 		align-items: center;
 		text-align: left;
 		background: var(--surface-400);
-		box-shadow: rgba(38, 37, 30, 0.1) 0 0 0 1px inset;
+		box-shadow: var(--color-card-border) 0 0 0 1px inset;
 		border-radius: var(--radius-featured);
 		padding: 18px;
 		cursor: pointer;
@@ -52,7 +52,7 @@ interface Props {
 	}
 	.card:focus-visible {
 		outline: none;
-		box-shadow: var(--shadow-focus), rgba(38, 37, 30, 0.1) 0 0 0 1px inset;
+		box-shadow: var(--shadow-focus), var(--color-card-border) 0 0 0 1px inset;
 	}
 	.off {
 		cursor: default;
@@ -65,7 +65,7 @@ interface Props {
 		border-radius: var(--radius-comfortable);
 		background: linear-gradient(140deg, var(--surface-100), var(--surface-500));
 		box-shadow:
-			rgba(38, 37, 30, 0.1) 0 0 0 1px inset,
+			var(--color-card-border) 0 0 0 1px inset,
 			var(--shadow-ambient);
 		display: flex;
 		align-items: center;

@@ -104,7 +104,7 @@
 		width: 400px;
 		max-width: 90vw;
 		background: var(--surface-400);
-		box-shadow: var(--shadow-card), rgba(38, 37, 30, 0.15) 0 0 0 1px inset;
+		box-shadow: var(--shadow-card), var(--color-card-border) 0 0 0 1px inset;
 		border-radius: 14px;
 		padding: 24px;
 		display: flex;
